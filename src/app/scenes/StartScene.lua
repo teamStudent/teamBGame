@@ -27,8 +27,15 @@ function StartScene:init()
                        :pos(display.cx, display.cy-30)
                        :addTo(self)
                        :setScale(1.5)
-                       
-
+    
+    self._liLianButton = cc.ui.UIPushButton.new({normal="StartScene/liLian.png"},{scale9=true})
+    					:onButtonClicked(function (event)
+    						--display.replaceScene(require("app.scenes.Lilian").new(), "fade",  0.5, display.COLOR_WHITE)
+    						display.replaceScene(Lilian.new(), "fade", 0.8)
+    					end)
+    					:pos(display.cx, display.cy-130)
+    					:addTo(self)
+    					:setScale(1.2)
 	
 	local music = cc.ui.UICheckBoxButton.new({off ="sound_off.png" ,on = "sound_on.png"})
 	music:setPosition(cc.p(display.width-50, display.top-50))
