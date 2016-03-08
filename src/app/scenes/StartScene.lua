@@ -25,7 +25,6 @@ function StartScene:init()
                        :pos(display.cx, display.cy-30)
                        :addTo(self)
                        :setScale(1.5)
-    
     self._liLianButton = cc.ui.UIPushButton.new({normal="StartScene/liLian.png"},{scale9=true})
     					:onButtonClicked(function (event)
     						--display.replaceScene(require("app.scenes.Lilian").new(), "fade",  0.5, display.COLOR_WHITE)
