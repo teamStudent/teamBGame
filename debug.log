@@ -22,7 +22,7 @@
 
 Quick-Cocos2dx-Community C++ support ready.
 ------------------------------------------------
-LOAD LUA FILE: /Users/tiny/Desktop/develop/defence/towerdefence/src/main.lua
+LOAD LUA FILE: /Users/tiny/Desktop/develop/teamBGame/src/main.lua
 ------------------------------------------------
 [LUA-print] ===========================================================
 [LUA-print]               LOAD QUICK FRAMEWORK
@@ -33,7 +33,7 @@ LOAD LUA FILE: /Users/tiny/Desktop/develop/defence/towerdefence/src/main.lua
 [LUA-print] [INFO] # device.platform              = mac
 [LUA-print] [INFO] # device.model                 = unknown
 [LUA-print] [INFO] # device.language              = cn
-[LUA-print] [INFO] # device.writablePath          = /Users/tiny/Desktop/develop/defence/towerdefence/
+[LUA-print] [INFO] # device.writablePath          = /Users/tiny/Desktop/develop/teamBGame/
 [LUA-print] [INFO] # device.directorySeparator    = /
 [LUA-print] [INFO] # device.pathSeparator         = :
 [LUA-print] [INFO] #
@@ -59,25 +59,6 @@ libpng warning: iCCP: known incorrect sRGB profile
 [LUA-print] [INFO] #
 libpng warning: iCCP: known incorrect sRGB profile
 libpng warning: iCCP: known incorrect sRGB profile
-[LUA-print] 0
-[LUA-print] 0
-[LUA-print] 0
-[LUA-print] 0
-[LUA-print] 0
-[LUA-print] 0
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
-libpng warning: iCCP: known incorrect sRGB profile
 libpng warning: iCCP: known incorrect sRGB profile
 [LUA-print] 0
 [LUA-print] 0
@@ -85,5 +66,12 @@ libpng warning: iCCP: known incorrect sRGB profile
 [LUA-print] 0
 [LUA-print] 0
 [LUA-print] 0
-2016-03-03 09:07:26.231 player3[5035:128373] Error retrieving mirror status for display: 1535231425
-2016-03-03 09:07:26.233 player3[5035:128373] There were errors gathering display information. Please include any previous errors in a bug report.
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile
+libpng warning: iCCP: known incorrect sRGB profile

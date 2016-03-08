@@ -101,7 +101,7 @@ function GameScene:init()    --init跳转
   :addTo(self.tileMap,1)
 
     local sp = display.newSprite("StartScene/add.png")
-  sp:setPosition(cc.p(0))
+  sp:setPosition(cc.p(0,0))
   --local scaleX = display.width/sp:getContentSize().width
   --local scaleY = display.height/sp:getContentSize().height
   --sp:setScale(scaleX,scaleY)
