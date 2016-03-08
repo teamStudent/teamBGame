@@ -17,6 +17,7 @@ function Wuqi4:ctor()
 	self.upMake=220
 	self.removeMake=160
 	self.totalMake=200
+	self.isdadedao = 2
 end
 
 return Wuqi4

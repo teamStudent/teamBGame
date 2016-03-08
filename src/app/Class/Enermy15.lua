@@ -9,6 +9,7 @@ function Enermy15:ctor()
 	self.old_life=500
 	self.hp=500
 	self.isMove=true
+	self.isCustom = true
 	self.money=30
 	self.moveSpeed=60
 	self.life=cc.Sprite:create("enermy/life.png")

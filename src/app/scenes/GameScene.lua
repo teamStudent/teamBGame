@@ -151,52 +151,47 @@ function GameScene:addEventListen()
     self:setTouchEnabled(true)
     self:setTouchSwallowEnabled(true)
     self:addNodeEventListener(cc.NODE_TOUCH_EVENT, function ( event )
-       
+      if event.name=="began" then
+          if self.upTag==2 then
+              self.upTag=1
+              self.scope:removeFromParent()
+          end
+          for k1,v1 in pairs(self.cannon) do
+              local rect1= self:newRect(v1)
 
-       if event.name=="began" then
-             
-             if self.upTag==2 then
-                   self.upTag=1
-                  self.scope:removeFromParent()
-                 
+              if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
+                  self.upSprite=v1
+                  self.upSpritePos=k1
+                  self:upOrDownConnon()
               end
-            for k1,v1 in pairs(self.cannon) do
-                local rect1= self:newRect(v1)
+              for k,v in pairs(self.monster) do
+                  local rect1= self:newRect(v)
+                  if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
+                      local x= v:getPositionX()-v1:getPositionX()
+                      local y= v:getPositionY()-v1:getPositionY()
+                      local s = math.sqrt(x*x+y*y)
+                      --如果距离小于武器的攻击范围，那么攻击
+                      --if v1.isdadedao==true then
+                          if s<=v1.scope then 
+                              if v1.attack==true then
+                                  v1.attack=false
+                                  local delay = cc.DelayTime:create(v1.attackSpeed)
+                                  local func= cc.CallFunc:create(function (even)
+                                      even.attack=true
+                                  end)
+                                  local seq = cc.Sequence:create(delay,func)
+                                  v1:runAction(seq)
+                                  self:attack(v1,v)
+                              end
+                                break
+                          end
+                      --end 
+                  end  
+              end
+          end
+          return true
 
-                if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
-                    self.upSprite=v1
-                    self.upSpritePos=k1
-                    self:upOrDownConnon()
-                end
-                for k,v in pairs(self.monster) do
-                local rect1= self:newRect(v)
-                
-                if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
-                    local x= v:getPositionX()-v1:getPositionX()
-                local y= v:getPositionY()-v1:getPositionY()
-                local s = math.sqrt(x*x+y*y)
-                --如果距离小于武器的攻击范围，那么攻击
-                if s<=v1.scope then 
-                    if v1.attack==true then
-                        v1.attack=false
-                        local delay = cc.DelayTime:create(v1.attackSpeed)
-                        local func= cc.CallFunc:create(function (even)
-                            even.attack=true
-                        end)
-                       local seq = cc.Sequence:create(delay,func)
-                        v1:runAction(seq)
-                        self:attack(v1,v)
-                    end
-                    break
-                end 
-                end  
-               end
-            end
-
-
-            return true
-
-        end      
+      end      
     end)
 end
 
@@ -1190,19 +1185,72 @@ function GameScene:updata()
                 local y= v:getPositionY()-v1:getPositionY()
                 local s = math.sqrt(x*x+y*y)
                 --如果距离小于武器的攻击范围，那么攻击
-                if s<=v1.scope then 
-                    if v1.attack==true then
-                        v1.attack=false
-                        local delay = cc.DelayTime:create(v1.attackSpeed)
-                        local func= cc.CallFunc:create(function (even)
-                            even.attack=true
-                        end)
-                    local seq = cc.Sequence:create(delay,func)
-                        v1:runAction(seq)
-                        self:attack(v1,v)
+                if v1.isdadedao==2 then
+                  if v.isCustom==true then
+                    if s<=v1.scope then 
+                        if v1.attack==true then
+                            v1.attack=false
+                            local delay = cc.DelayTime:create(v1.attackSpeed)
+                            local func= cc.CallFunc:create(function (even)
+                                even.attack=true
+                            end)
+                            local seq = cc.Sequence:create(delay,func)
+                            v1:runAction(seq)
+                            self:attack(v1,v)
+                        end
+                          break
                     end
-                    break
-                end 
+                  end
+                end
+                if v1.isdadedao==1 then
+                  if v.isCustom==false then
+                    if s<=v1.scope then 
+                        if v1.attack==true then
+                            v1.attack=false
+                            local delay = cc.DelayTime:create(v1.attackSpeed)
+                            local func= cc.CallFunc:create(function (even)
+                                even.attack=true
+                            end)
+                            local seq = cc.Sequence:create(delay,func)
+                            v1:runAction(seq)
+                            self:attack(v1,v)
+                        end
+                          break
+                    end
+                  end
+                end
+                 if v1.isdadedao==3 then
+                    if s<=v1.scope then 
+                        if v1.attack==true then
+                            v1.attack=false
+                            local delay = cc.DelayTime:create(v1.attackSpeed)
+                            local func= cc.CallFunc:create(function (even)
+                                even.attack=true
+                            end)
+                            local seq = cc.Sequence:create(delay,func)
+                            v1:runAction(seq)
+                            self:attack(v1,v)
+                        end
+                          break
+                    end
+                end
+                --else if v1.isdadedao==false then
+                    --if  v.isCustom==true then
+                        --if s<=v1.scope then
+                            --if v1.attack==true then
+                                --v1.attack=false
+                                --local delay = cc.DelayTime:create(v1.attackSpeed)
+                                --local func= cc.CallFunc:create(function (even)
+                                   --even.attack=true
+                                --end)
+                                --ocal seq = cc.Sequence:create(delay,func)
+                                --v1:runAction(seq)
+                                --self:attack(v1,v)
+                            --end
+                              --break
+                        --end
+                    --end
+                     
             end
         end 
         if self.isWin and #self.monster==0 then

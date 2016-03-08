@@ -21,5 +21,6 @@ function Wuqi2:init()
 	self.upMake=110
 	self.removeMake=80
 	self.totalMake=100
+	self.isdadedao = 2
 end
 return Wuqi2
