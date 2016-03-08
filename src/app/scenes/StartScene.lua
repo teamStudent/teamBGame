@@ -17,12 +17,10 @@ function StartScene:init()
 	bg:setScale(scaleX,scaleY)
 	bg:setPosition(cc.p(display.cx,display.cy))
 	self:addChild(bg)
-
-
-    
-	self._startButton = cc.ui.UIPushButton.new({normal="StartScene/play.png"},{scale9=true})
-	                   :onButtonClicked(function(event)
-                   	   display.replaceScene(SelectScene.new())
+                       
+     self._startButton = cc.ui.UIPushButton.new({normal="StartScene/add.png"},{scale9=true})
+                       :onButtonClicked(function(event)
+                        display.replaceScene(SelectScene.new())
                        end)
                        :pos(display.cx, display.cy-30)
                        :addTo(self)
