@@ -597,6 +597,7 @@ function GameScene:testTouch()
             for k,v in pairs(self.cannon) do
                 local rect1= self:newRect(v)
                 if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
+                  
                     self.addSp:removeFromParent()
                     return
                 end
