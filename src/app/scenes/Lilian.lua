@@ -22,6 +22,13 @@ function Lilian:init()
 	bg:setPosition(cc.p(display.cx,display.cy))
 	self:addChild(bg)
 
+	local backBtn = cc.ui.UIPushButton.new({normal="back.png"},{scale9=true})
+                   :onButtonClicked(function(event)
+                   	display.replaceScene(StartScene.new())
+                   end)
+                   :pos(display.right-50, display.top-50)
+                   :addTo(self,1)
+
 	local liLianTai = display.newSprite("LiLianScene/liLianTai.png")
 	liLianTai:setPosition(cc.p(display.width*4.0/6, display.cy-100))
 	self:addChild(liLianTai)
@@ -36,11 +43,15 @@ function Lilian:init()
 	liLian_Scroll:setDirection(1)
 	liLian_Scroll:setContentSize(cc.size(display.width*0.444, display.height*5/3))
 	-- liLian_Scroll:setPosition(cc.p(0, 0))
+	--liLian_Scroll:setContentOffset(300)
 	self:addChild(liLian_Scroll)
 
 	for i=1,5 do
 		local liLian_item = display.newSprite("wuqi"..i..".png")
 		liLian_item:setPosition(cc.p(display.width/10, display.height*(2*i - 1)/6))
+		-- liLian_layer:addChild(liLian_item)
+		liLian_Scroll:addChild(liLian_item)
+
 		local item_Label = cc.ui.UILabel.new({
 			text = "jhghj",
 			color = cc.c3b(250, 250, 5),
@@ -48,8 +59,20 @@ function Lilian:init()
 			})
 		:setPosition(cc.p(display.width/10 + 100, display.height*(2*i - 1)/6))
 		:addTo(liLian_Scroll)
-		-- liLian_layer:addChild(liLian_item)
-		liLian_Scroll:addChild(liLian_item)
+
+		local liLianBtn = cc.ui.UIPushButton.new({normal="LiLianScene/liLian.png"}, {scale9=true})
+							:onButtonClicked(function(event)
+								local paoTai = display.newSprite("wuqi"..i..".png")
+												:setPosition(liLian_item:convertToWorldSpace(cc.p(0,0)))
+												:setScale(0.0)
+												:addTo(self)
+												:runAction(cc.Spawn:create(
+													cc.MoveTo:create(1.0, cc.p(display.width*4.0/6, display.cy)),
+													cc.ScaleTo:create(1.0, 1.0, 1.0)))
+							end)
+							:setPosition(cc.p(display.width/10 + 200, display.height*(2*i - 1)/6))
+							:addTo(liLian_Scroll)
+
 	end
 
 end
