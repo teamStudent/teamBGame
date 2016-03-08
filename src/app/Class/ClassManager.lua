@@ -41,3 +41,7 @@ Bullet4=require("app.Class.Bullet4")
 Bullet5=require("app.Class.Bullet5")
 Cell=require("app.Class.Cell")
 Lilian=require("app.scenes.Lilian")
+
+ISLILIAN = "isLiLian"
+LILIANTAINUM = "liLianTaiNum"
+LILIANOFHOUR = "LiLianOfHour"

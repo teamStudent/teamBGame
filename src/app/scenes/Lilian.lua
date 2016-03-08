@@ -11,6 +11,8 @@ local Lilian=class("Lilian", function ()
 end)
 
 function Lilian:ctor()
+	--月
+	print(os.date("%m"))
 	self:init()
 end
 
@@ -62,6 +64,7 @@ function Lilian:init()
 
 		local liLianBtn = cc.ui.UIPushButton.new({normal="LiLianScene/liLian.png"}, {scale9=true})
 							:onButtonClicked(function(event)
+								if cc.UserDefault:getInstance():getBoolForKey(ISLILIAN) == false then
 								local paoTai = display.newSprite("wuqi"..i..".png")
 												:setPosition(liLian_item:convertToWorldSpace(cc.p(0,0)))
 												:setScale(0.0)
@@ -69,10 +72,19 @@ function Lilian:init()
 												:runAction(cc.Spawn:create(
 													cc.MoveTo:create(1.0, cc.p(display.width*4.0/6, display.cy)),
 													cc.ScaleTo:create(1.0, 1.0, 1.0)))
+								cc.UserDefault:getInstance():setBoolForKey(ISLILIAN, true)
+								cc.UserDefault:getInstance():setIntegerForKey(LILIANTAINUM, i)
+								cc.UserDefault:getInstance():setIntegerForKey(LILIANOFHOUR, os.date("%H"))
+								end
 							end)
 							:setPosition(cc.p(display.width/10 + 200, display.height*(2*i - 1)/6))
 							:addTo(liLian_Scroll)
+	end
 
+	if cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM) ~= 0 then
+		local paoTai = display.newSprite("wuqi"..cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM)..".png")
+		paoTai:setPosition(cc.p(display.width*4.0/6, display.cy))
+		self:addChild(paoTai)
 	end
 
 end
