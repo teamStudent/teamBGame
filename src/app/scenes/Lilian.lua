@@ -26,22 +26,30 @@ function Lilian:init()
 	liLianTai:setPosition(cc.p(display.width*4.0/6, display.cy-100))
 	self:addChild(liLianTai)
 
-	local liLian_layer = display.newColorLayer(cc.c4b(200,200,0,255))
-	liLian_layer:setContentSize(cc.size(display.width*0.444, display.height*3/2))
-	liLian_layer:setAnchorPoint(cc.p(0,1-display.height/liLian_layer:getContentSize().height))
+	-- local liLian_layer = display.newColorLayer(cc.c4b(200,200,0,255))
+	-- liLian_layer:setContentSize(cc.size(display.width*0.444, display.height*3/2))
+	-- liLian_layer:setAnchorPoint(cc.p(0,1-display.height/liLian_layer:getContentSize().height))
 	-- liLian_layer:pos(0, display.height)
 	-- liLian_layer:setPosition(cc.p(0, display.height))
 
-	local liLian_Scroll = cc.ScrollView:create(cc.size(display.width*0.444, display.height), liLian_layer)
+	local liLian_Scroll = cc.ScrollView:create(cc.size(display.width*0.444, display.height))
 	liLian_Scroll:setDirection(1)
+	liLian_Scroll:setContentSize(cc.size(display.width*0.444, display.height*5/3))
 	-- liLian_Scroll:setPosition(cc.p(0, 0))
 	self:addChild(liLian_Scroll)
 
 	for i=1,5 do
 		local liLian_item = display.newSprite("wuqi"..i..".png")
-		liLian_item:setPosition(cc.p(display.width/6, liLian_layer:getContentSize().height*(6-i)/6))
-		liLian_layer:addChild(liLian_item)
-		-- liLian_Scroll:addChild(liLian_item)
+		liLian_item:setPosition(cc.p(display.width/10, display.height*(2*i - 1)/6))
+		local item_Label = cc.ui.UILabel.new({
+			text = "jhghj",
+			color = cc.c3b(250, 250, 5),
+			size = 24,
+			})
+		:setPosition(cc.p(display.width/10 + 100, display.height*(2*i - 1)/6))
+		:addTo(liLian_Scroll)
+		-- liLian_layer:addChild(liLian_item)
+		liLian_Scroll:addChild(liLian_item)
 	end
 
 end
