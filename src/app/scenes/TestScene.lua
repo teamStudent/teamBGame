@@ -1,4 +1,4 @@
-\''
+--
 -- Author: Your Name
 -- Date: 2016-03-08 10:29:55
 --
@@ -20,11 +20,8 @@ function TestScene:init()
                    :onButtonClicked(function(event)
                    display.replaceScene(require("app/scenes/MyGameScene"):new())
                    end)
-                   :pos(display.cx, display.cy-200)
+                   :pos(display.cx, display.cy)
                    :addTo(self,1)
-
-
-    
 
      --ccs.ArmatureDataManager:getInstance():addArmatureFileInfo("hero1.png","hero10.plist","hero10.ExportJson")
      --local  armaature = ccs.Armature:create("hero1")
