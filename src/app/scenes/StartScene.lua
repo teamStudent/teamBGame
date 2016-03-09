@@ -22,7 +22,7 @@ function StartScene:init()
 
 	local starbt = cc.ui.UIPushButton.new({normal = "add.png"},{scale9=true})
 					:onButtonClicked (function(event)
-					display.replaceScene(require("GameScene"):new())
+					display.replaceScene(GameScene.new())
 					end)
 					:pos(display.cx, display.cy-200)
 					:addTo(self,1)             

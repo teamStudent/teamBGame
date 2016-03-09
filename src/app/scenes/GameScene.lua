@@ -101,7 +101,7 @@ function GameScene:init()
   :align(display.CENTER, display.cx-10, display.top-20)
   :addTo(self.tileMap,1)
 
-    local sp = display.newSprite("StartScene/add.png")
+    local sp = display.newSprite("add.png")
   sp:setPosition(cc.p(0,0))
   --local scaleX = display.width/sp:getContentSize().width
   --local scaleY = display.height/sp:getContentSize().height
