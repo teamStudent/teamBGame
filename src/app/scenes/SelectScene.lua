@@ -22,6 +22,15 @@ function SelectScene:init()
 	bg:setScale(scaleX,scaleY)
 	self:addChild(bg)
 
+	--a*副本按钮
+	local astarBtn = cc.ui.UIPushButton.new({normal = "StartScene/liLian.png"},{scale9 = true})
+	astarBtn:onButtonClicked(function(event)
+		display.replaceScene(MyScene.new())
+	end)
+	astarBtn:pos(display.right-50,display.top-50)
+	self:addChild(astarBtn, 1)
+
+
 	local backBtn = cc.ui.UIPushButton.new({normal="back.png"},{scale9=true})
 	backBtn:onButtonClicked(function(event)
 		display.replaceScene(StartScene.new())

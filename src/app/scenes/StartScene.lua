@@ -20,19 +20,19 @@ function StartScene:init()
                        
 
 
-	local starbt = cc.ui.UIPushButton.new({normal = "add.png"},{scale9=true})
-					:onButtonClicked (function(event)
-					display.replaceScene(GameScene.new())
-					end)
-					:pos(display.cx, display.cy-200)
-					:addTo(self,1)             
+	-- local starbt = cc.ui.UIPushButton.new({normal = "add.png"},{scale9=true})
+	-- 				:onButtonClicked (function(event)
+	-- 				display.replaceScene(GameScene.new())
+	-- 				end)
+	-- 				:pos(display.cx, display.cy-200)
+	-- 				:addTo(self,1)             
     
 
-     self._startButton = cc.ui.UIPushButton.new({normal="StartScene/add.png"},{scale9=true})
+     self._startButton = cc.ui.UIPushButton.new({normal="add.png"},{scale9=true})
                        :onButtonClicked(function(event)
                         display.replaceScene(SelectScene.new())
                        end)
-                       :pos(display.cx, display.cy-30)
+                       :pos(display.cx, display.cy)
                        :addTo(self)
                        :setScale(1.5)
 
