@@ -14,9 +14,9 @@ local sceneNum
 local chapterNum
 local totalNumber
 local enermyTypeNum
-
+local totalNumber 
 local scheduler=require(cc.PACKAGE_NAME..".scheduler")
-function GameScene:init()    --init跳转
+function GameScene:init()
   local tb = PublicData.SCENETABLE
   sceneNum=ModifyData.getSceneNumber()
   chapterNum=ModifyData.getChapterNumber()
@@ -30,8 +30,9 @@ function GameScene:init()    --init跳转
   bg:setScale(scaleX,scaleY)
   bg:pos(display.cx, display.cy)
   self:addChild(bg)
+ 
 
-    local path="map/game"..sceneNum.."-"..chapterNum..".tmx"
+  local path="map/game"..sceneNum.."-"..chapterNum..".tmx"
     self.monsterNum=0     --怪物数
     self.number=1    --波数
     self.killEnermyNum=0  --杀敌数
@@ -99,14 +100,6 @@ function GameScene:init()    --init跳转
     })
   :align(display.CENTER, display.cx-10, display.top-20)
   :addTo(self.tileMap,1)
-
-    local sp = display.newSprite("StartScene/add.png")
-  sp:setPosition(cc.p(0))
-  --local scaleX = display.width/sp:getContentSize().width
-  --local scaleY = display.height/sp:getContentSize().height
-  --sp:setScale(scaleX,scaleY)
-  --sp:pos(display.cx,display.cy)
-  self:addChild(sp)
 
  --显示血量
  local hpNumSp=display.newSprite("GameScene/xueliang.png")
@@ -604,6 +597,7 @@ function GameScene:testTouch()
             for k,v in pairs(self.cannon) do
                 local rect1= self:newRect(v)
                 if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
+                  
                     self.addSp:removeFromParent()
                     return
                 end
