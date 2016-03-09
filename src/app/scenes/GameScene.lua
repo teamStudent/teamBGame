@@ -1,4 +1,4 @@
-﻿--
+--
 -- Author: student
 -- Date: 2015-07-27 18:39:33
 --
@@ -133,6 +133,9 @@ function GameScene:init()
   stopBtn:setScale(0.4)
   self:addChild(stopBtn)
 
+  --显示主角血量条
+  
+  
   --添加大炮
   self.cannon={}
   --敌人表
@@ -141,6 +144,8 @@ function GameScene:init()
   self.bullet={}
   --时间调度，开始出怪
   self:createOneEnermy()
+  --添加主角
+  self:createZhujue()
   self:createEnermy()
   --初始化道具
   self:testTouch()
@@ -809,6 +814,26 @@ function GameScene:newRect(v)
     return rect
 end
 
+function GameScene:createZhujue()
+  --local zhujue = display.newSprite("houzi_2.png")
+  --zhujue:setPosition(cc.p(50,display.height-80))
+  --zhujue:setScale(0.5)
+  --self:addChild(zhujue)
+
+  for i=1,2 do
+     local zhujue = display.newSprite("houzi"..i..".png")
+     zhujue:setPosition(cc.p(50,display.height-80))
+     zhujue:setScale(0.5)
+     self:addChild(zhujue)
+  end
+     
+
+    --zhujue:new Zhujue()
+    --zhujue:setAnchorPoint(cc.p(0.5,0.5))
+    --zhujue:setPosition(cc.p(size.width-50,size.height-50)
+    
+end
+
 function GameScene:createEnermy()
   local function createE()
     if self.number==nil then
@@ -1286,7 +1311,6 @@ function GameScene:removeUpdata()
                     rect2=v1:getBoundingBox()
 
                     if cc.rectIntersectsRect(rect2,rect1) then
-
                         v.hp=v.hp-v1.firepower
                         v.life:setScaleX(v.hp/v.old_life)
                         v1:removeFromParent()

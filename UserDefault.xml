@@ -1,2 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<userDefaultRoot/>
+<userDefaultRoot>
+    <isLiLian>true</isLiLian>
+    <liLianTaiNum>2</liLianTaiNum>
+    <LiLianOfHour>10</LiLianOfHour>
+</userDefaultRoot>
