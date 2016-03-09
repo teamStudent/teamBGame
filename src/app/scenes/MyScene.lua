@@ -15,9 +15,10 @@ local chapterNum
 local totalNumber
 local enermyTypeNum
 local totalNumber 
+local mapdata
+local prop
 local scheduler=require(cc.PACKAGE_NAME..".scheduler")
 function MyScene:init()
-
 
 	self:initNums()
 	self:initUI()
@@ -43,7 +44,7 @@ function MyScene:init()
     	if event.name == "began" then
     		local x = math.floor(event.x/64)+1
     		local y = math.floor((640-event.y)/64)+1
-    		print(x,y)
+    		--print(x,y)
     		--print(self.showLayer:getTileGIDAt(cc.p(x-1,y-1)))
     		return true
 
@@ -60,10 +61,18 @@ function MyScene:initMapInfo()
     self.ColCount = 15
     self.RowCount = 10
 
-	self.hero=self.map:getObjectGroup("object")
+    mapdata = {}
+    for i = 1, self.ColCount do
+      mapdata[i] = {}
+      for j = 1, self.RowCount do
+        mapdata[i][j] = 0
+      end
+    end
+
+	  self.hero=self.map:getObjectGroup("object")
     self.showLayer=self.map:getLayer("showLayer")
     self.layer = self.map:getLayer("layer")
-    self.showLayer:hide()
+    --self.showLayer:hide()
 
     self.beginPoint = self.hero:getObject("begin")
     self.endPoint = self.hero:getObject("end")
@@ -73,26 +82,26 @@ function MyScene:initMapInfo()
     qizi:setAnchorPoint(cc.p(0,0))
 
     --代理传值
-    local prop = {}
+    prop = {}
     prop.col =self.ColCount
     prop.row = self.RowCount
-    prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64+1) }
-    prop.endPos = { x = math.floor(self.endPoint.x/64)+1, y =  math.floor((640-self.endPoint.y)/64+1) }
+    prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
+    prop.endPos = { x = math.floor(self.endPoint.x/64)+1, y =  math.floor((640-self.endPoint.y)/64)+1 }
     prop.getV = function(i,j)
         local Gid = self.showLayer:getTileGIDAt(cc.p(i-1,j-1))
-        if Gid==51 then  
-           return 0  
+        if Gid==51 then
+          if mapdata[i][j] == 0 then
+            return 0  
+          end
         end  
         return 1 
 	end
 
-	--a*路径
-    self.path = AStarFindRoute.init(prop)
 
     --敌人
-    local enermy = Enermy.new():pos(self.beginPoint.x,self.beginPoint.y):addTo(self.map,1)
-    enermy:setAnchorPoint(cc.p(0,0))
-    enermy:runAction(self:enemyMove())
+    self.enermy = Enermy.new():pos(self.beginPoint.x,self.beginPoint.y):addTo(self.map,1)
+    self.enermy:setAnchorPoint(cc.p(0.5,0.5))
+    self.enermy:runAction(cc.Sequence:create(cc.DelayTime:create(10.0),self:enemyMove()))
 
     --武器信息
     self.wuqi1Point=self.hero:getObject("wuqi1")
@@ -183,8 +192,6 @@ function MyScene:initUI()
   stopBtn:setPosition(cc.p(display.width-30, display.height-30))
   stopBtn:setScale(0.4)
   self:addChild(stopBtn)
-
-
 end
 
 function MyScene:initNums()
@@ -202,6 +209,8 @@ function MyScene:initNums()
   self.monster={}
   --子弹
   self.bullet={}
+
+
 
 end
 
@@ -258,6 +267,15 @@ function MyScene:addEventListen()
     end)
 end
 
+function MyScene:changePath()
+    self.enermy:stopAllActions()
+    prop.startPos = {x = math.floor(self.enermy:getPositionX()/64)+1,y = math.floor((640-self.enermy:getPositionY())/64)+1}
+    print(prop.startPos.x,prop.startPos.y)
+    local x,y = math.floor(self.addSp:getPositionX()/64)+1,math.floor((640-self.addSp:getPositionY())/64+1)
+    --mapdata[x][y] = 1
+    self.enermy:runAction(self:enemyMove())
+end
+
 function MyScene:testTouch()
     local money1 = display.newSprite("GameScene/money.png")
     money1:pos(self.wuqi1Point.x-2,display.bottom+3)
@@ -296,8 +314,11 @@ function MyScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -315,6 +336,7 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            self:changePath()
         end
         
     end)
@@ -359,8 +381,11 @@ function MyScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -378,6 +403,7 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            self:changePath()
         end
     end)
   
@@ -420,8 +446,11 @@ function MyScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -439,6 +468,7 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            self:changePath()
         end
         
     end)
@@ -481,8 +511,11 @@ function MyScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -500,6 +533,7 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            self:changePath()
         end
         
     end)
@@ -540,8 +574,11 @@ function MyScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -559,20 +596,20 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            self:changePath()
         end
         
     end)
 end
 
 function MyScene:upOrDownConnon()
-     self.upTag=2
+    self.upTag=2
     self.scope=cc.Sprite:create("scope.png")
     self.scope:pos(self.upSprite:getPositionX(), self.upSprite:getPositionY())
     self.scope:setAnchorPoint(cc.p(0.5,0.5))
     self.scope:setScale(self.upSprite.scope/100)
     self.scope:addTo(self.map,2)
   
-
 
     if self.money-self.upSprite.upMake>=0 then
     self.upConnon=cc.Sprite:create("GameScene/up1.png")
@@ -584,6 +621,7 @@ function MyScene:upOrDownConnon()
     self.upConnon:addTo(self.scope,3)
     self.upConnon:setTouchEnabled(true)
     self.upConnon:setTouchSwallowEnabled(true)
+
     self.upConnon:addNodeEventListener(cc.NODE_TOUCH_EVENT, function (event)
         if event.name=="ended" then    
             if self.upSprite.currentLevel<3 then
@@ -619,9 +657,9 @@ function MyScene:upOrDownConnon()
 
                  end   
           end
-        elseif event.name=="began" then
+       elseif event.name=="began" then
             return true
-        end
+       end
     end)
 
   self.upMakeLabel=cc.ui.UILabel.new({
@@ -682,11 +720,14 @@ end
 
 --怪物移动
 function MyScene:enemyMove()
+
 	local  move = {}
+    --a*路径
+  local path = AStarFindRoute.init(prop)
 	local  enemy = self.map:getObjectGroup("object")
-	if table.nums(self.path)>0 then
-		for i = #self.path,1,-1 do
-			move[#move+1] = cc.MoveTo:create(0.5, cc.p(((self.path[i].x-1)*64),((self.RowCount-(self.path[i].y))*64)))
+	if table.nums(path)>0 then
+		for i = #path-1,1,-1 do
+			move[#move+1] = cc.MoveTo:create(1, cc.p((path[i].x-1)*64+32,((self.RowCount-path[i].y)*64+32)))
 		end
 	end
 
@@ -694,67 +735,5 @@ function MyScene:enemyMove()
 	return seq
 end
 
-
-
-
-
-
-
-
-
-function MyScene:test1()
-
---容器
-
-	self.enermyList = {}
-
-	for i=1,5 do
-		enermy = Enermy.new()
-		enermy:setPosition(cc.p(100+i*50,80))  
-		enermy:addTo(self)
-
-		--enermy:runAction(cc.MoveBy:create(1,cc.p(100,100)))
-
-		self.enermyList[#self.enermyList+1] = enermy
-	end
-
-	print(#self.enermyList)
-
-	for i = 1,#self.enermyList  do
-		self.enermyList[i]:runAction(cc.RepeatForever:create(cc.RotateBy:create(1, 2000)))
-
-	end
-
-	local table =  {
-	{name = "pipi",age = 23},
-	{name = "xiaojun", age = 23},
-	{name = "sisi",age = 21}
-	}
-
-	for k,v in pairs(table) do
-		print(k,v.name,v.age)
-	end
-
-	local bt = ccui.Button:create("back.png"):center():addTo(self)
-	local bt2 = cc.ui.UIPushButton.new({normal="StartScene/play.png"},{scale9=true})
-	:pos(300,300)
-	:addTo(self)
-
-
-	-- --计时器(update,自定义计时器)
--- 	local scheduler = require(cc.PACKAGE_NAME..".scheduler")
--- 	local function onInterval(dt)
--- 		print("heihei")
--- 	end
--- 	--scheduler.scheduleGlobal(onInterval,1)
-
--- 	local wuqi = display.newSprite("wuqi1.png"):addTo(self):center();
-	
--- 	self:getScheduler():scheduleScriptFunc(function (f)
--- 		wuqi:setVisible(false);
--- 	end,3,false)
-	
-
-end
 
 return MyScene
