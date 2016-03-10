@@ -1177,9 +1177,7 @@ function GameScene:creatDongHua()
     local y = upv.y-self.endPoint.y
     timee = math.sqrt(x*x+y*y)/self.moveSpeed
     move[#move+1]=cc.MoveTo:create(timee,cc.p(self.endPoint.x, self.endPoint.y))
-    move[#move+1]=cc.CallFunc:create(function (event)
-        event.isMove=false
-    end)
+
     local seq = cc.Sequence:create(move)
     return seq
 end

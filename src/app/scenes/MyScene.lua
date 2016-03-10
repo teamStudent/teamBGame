@@ -25,14 +25,14 @@ function MyScene:init()
 	self:initMapInfo()
 
   --时间调度，开始出怪
-  -- self:createOneEnermy()
-  -- self:createEnermy()
+  self:createOneEnermy()
+  self:createEnermy()
 
   self:testTouch()
   -- -- 时间调度，怪进入塔的攻击范围之内，开始攻击
-  -- self:updata()
+   self:updata()
   -- --时间调度，清除已完成动作的
-  -- self:removeUpdata()
+   self:removeUpdata()
   self:addEventListen()
   --升级的炮塔
   self.upTag=0
@@ -101,7 +101,6 @@ function MyScene:initMapInfo()
     --敌人
     self.enermy = Enermy.new():pos(self.beginPoint.x,self.beginPoint.y):addTo(self.map,1)
     self.enermy:setAnchorPoint(cc.p(0.5,0.5))
-    self.enermy:runAction(cc.Sequence:create(cc.DelayTime:create(10.0),self:enemyMove()))
 
     --武器信息
     self.wuqi1Point=self.hero:getObject("wuqi1")
@@ -112,6 +111,8 @@ function MyScene:initMapInfo()
 
 
 end
+
+
 
 function MyScene:initUI()
 	--添加背景
@@ -267,13 +268,30 @@ function MyScene:addEventListen()
     end)
 end
 
-function MyScene:changePath()
-    self.enermy:stopAllActions()
-    prop.startPos = {x = math.floor(self.enermy:getPositionX()/64)+1,y = math.floor((640-self.enermy:getPositionY())/64)+1}
-    print(prop.startPos.x,prop.startPos.y)
-    local x,y = math.floor(self.addSp:getPositionX()/64)+1,math.floor((640-self.addSp:getPositionY())/64+1)
-    --mapdata[x][y] = 1
-    self.enermy:runAction(self:enemyMove())
+--怪物移动
+function MyScene:enemyMove(enemy)
+
+  prop.startPos = { x = math.floor(enemy:getPositionX()/64)+1 , y = math.floor((640-enemy:getPositionY())/64)+1}
+  local path = AStarFindRoute.init(prop)
+
+  local  move = {}
+  
+  if table.nums(path)>0 then
+    for i = #path-1,1,-1 do
+      move[#move+1] = cc.MoveTo:create(1, cc.p((path[i].x-1)*64+32,((self.RowCount-path[i].y)*64+32)))
+    end
+    move[#move+1]=cc.CallFunc:create(function (event)
+    event.isMove=false
+      end)
+  end
+
+  local seq = cc.Sequence:create(move)
+  enemy:runAction(seq)
+end
+
+function MyScene:changePath(enemy)
+    enemy:stopAllActions()
+    self:enemyMove(enemy)
 end
 
 function MyScene:testTouch()
@@ -336,7 +354,10 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
-            self:changePath()
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
+            
         end
         
     end)
@@ -403,7 +424,9 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
-            self:changePath()
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
     end)
   
@@ -468,7 +491,9 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
-            self:changePath()
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
         
     end)
@@ -533,7 +558,9 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
-            self:changePath()
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
         
     end)
@@ -596,7 +623,9 @@ function MyScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
-            self:changePath()
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
         
     end)
@@ -621,7 +650,6 @@ function MyScene:upOrDownConnon()
     self.upConnon:addTo(self.scope,3)
     self.upConnon:setTouchEnabled(true)
     self.upConnon:setTouchSwallowEnabled(true)
-
     self.upConnon:addNodeEventListener(cc.NODE_TOUCH_EVENT, function (event)
         if event.name=="ended" then    
             if self.upSprite.currentLevel<3 then
@@ -706,6 +734,433 @@ function MyScene:upOrDownConnon()
     :addTo(self.scope,3)
 end
 
+function MyScene:attack(v1,v)
+--v1当前处理的加农炮
+--当前处理的敌人
+
+  if v1:getTag()==10 then
+    local rotate=cc.RotateTo:create(0.01,self:angle(v1,v)+180)
+    v1:runAction(rotate)
+    bullet = Bullet1.new()
+    bullet:setScale(0.5)
+    bullet:setAnchorPoint(cc.p(0.5,0.5))
+    bullet:setPosition(v1:getPositionX(),v1:getPositionY())
+    bullet:setRotation(v1:getRotation())
+    bullet:addTo(self.map,3) 
+
+    local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
+    local func = cc.CallFunc:create(function (bullet)
+
+    self.bullet[#self.bullet+1]=bullet
+    bullet.isMove=false
+    end)
+    local seq = cc.Sequence:create(move,func) 
+    bullet.isMove=true
+    bullet.firepower=v1.firepower 
+    bullet:runAction(seq)
+
+  elseif v1:getTag()==20 then
+    local rotate=cc.RotateTo:create(0.01,self:angle(v1,v)+180)
+    v1:runAction(rotate)
+    bullet = Bullet2.new()
+    bullet:setAnchorPoint(cc.p(0.5,0.5))
+    bullet:setPosition(v1:getPositionX(),v1:getPositionY())
+    bullet:setRotation(v1:getRotation())
+    local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
+    local func = cc.CallFunc:create(function(bullet)
+
+    self.bullet[#self.bullet+1]=bullet
+      bullet.isMove=false
+    end)
+    seq = cc.Sequence:create(move,func) 
+    bullet.isMove=true
+    bullet.firepower=v1.firepower
+    bullet:addTo(self.map,3)  
+    bullet:runAction(seq)
+
+  elseif v1:getTag()==30 then
+    local rotate=cc.RotateTo:create(0.01,self:angle(v1,v)+180)
+    v1:runAction(rotate)
+    bullet = Bullet3.new()
+    bullet:setAnchorPoint(cc.p(0.5,0.5))
+    bullet:setRotation(v1:getRotation())
+    bullet:setPosition(v1:getPositionX(),v1:getPositionY())
+    local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
+    local func = cc.CallFunc:create(function (bullet)
+    self.bullet[#self.bullet+1]=bullet
+    bullet.isMove=false
+    end)
+    local seq = cc.Sequence:create(move,func) 
+    bullet.isMove=true
+    bullet.firepower=v1.firepower
+    bullet:addTo(self.map,3)  
+    bullet:runAction(seq)
+  elseif v1:getTag()==50 then
+       bullet = Bullet5.new()
+       bullet:setScale(0.5)
+       bullet:setPosition(v:getPositionX(),v:getPositionY()+65)
+       bullet:setAnchorPoint(cc.p(0.5,0.5))
+       self.bullet[#self.bullet+1]=bullet
+       local delay=cc.DelayTime:create(2)
+
+    local func = cc.CallFunc:create(function (bullet)
+          
+          self.bullet[#self.bullet+1]=bullet
+          bullet.isMove=false
+            
+    end)
+    
+
+    local seq = cc.Sequence:create(delay,func) 
+    bullet.isMove=true
+    bullet.firepower=v1.firepower
+    bullet:addTo(self.map,3)  
+    bullet:runAction(seq)
+        
+  elseif v1:getTag()==40 then
+        bullet = Bullet4.new()
+        local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
+        local func = cc.CallFunc:create(function (bullet)
+
+           self.bullet[#self.bullet+1]=bullet
+            bullet.isMove=false
+            
+        end)
+
+       local seq = cc.Sequence:create(move,func) 
+        bullet:setScale(0.6)
+        bullet.isMove=true
+        bullet:setPosition(v1:getPositionX(),v1:getPositionY())
+        bullet:addTo(self.map,3)  
+        bullet:runAction(seq)
+        bullet.firepower=v1.firepower
+  end
+end
+
+function MyScene:createEnermy()
+  local function createE()
+    if self.number==nil then
+          return
+    end
+    self.number=self.number+1
+    if self.number>totalNumber then
+        scheduler.unscheduleGlobal(self.handle1)
+        self.handle1=nil
+        self.number=1
+        self.isWin=true
+        return
+    end
+    self.enermyNumLabel:setString(self.number.."/"..totalNumber)
+    self.rad=math.random(1,3)
+    self.enemyCreateTime=1.5
+
+    local function createMonster()
+      if self.monsterNum==10 then
+        scheduler.unscheduleGlobal(self.handle)
+        self.handle=nil
+        self.monsterNum=0
+        return
+      else
+          local enermy=Enermy.new()
+          self.moveSpeed=50
+          if self.number==2 then
+            enermy=nil
+            enermy=Enermy2.new()
+            self.moveSpeed=100
+            self.enemyCreateTime=1.4
+        elseif self.number==3 then
+            enermy=nil
+            enermy=Enermy3.new()
+            self.moveSpeed=100
+            self.enemyCreateTime=1.3
+        elseif self.number==4 then
+            enermy=nil
+            enermy=Enermy4.new()
+            self.moveSpeed=150
+            self.enemyCreateTime=1.2
+        elseif self.number==5 then
+            enermy=nil
+            enermy=Enermy5.new()
+            self.moveSpeed=150
+            self.enemyCreateTime=1.1
+        elseif self.number==6 then
+            enermy=nil
+            enermy=Enermy6.new()
+            self.moveSpeed=150
+            self.enemyCreateTime=1.0
+        elseif self.number==7 then
+            enermy=nil
+            enermy=Enermy7.new()
+            self.moveSpeed=200
+            self.enemyCreateTime=0.9
+        elseif self.number==8 then
+            enermy=nil
+            enermy=Enermy8.new()
+            self.moveSpeed=200
+            self.enemyCreateTime=0.8
+        elseif self.number==9 then
+            enermy=nil
+            enermy=Enermy9.new()
+            self.moveSpeed=200
+            self.enemyCreateTime=0.7
+        elseif self.number==10 then
+            enermy=nil
+            enermy=Enermy10.new()
+            self.moveSpeed=250
+            self.enemyCreateTime=0.6
+        elseif self.number==11 then
+            enermy=nil
+            enermy=Enermy11.new()
+            self.moveSpeed=250
+            self.enemyCreateTime=0.5
+        elseif self.number==12 then
+            enermy=nil
+            enermy=Enermy12.new()
+            self.moveSpeed=250
+            self.enemyCreateTime=0.4
+        elseif self.number==13 then
+            enermy=nil
+            enermy=Enermy13.new()
+            self.moveSpeed=300
+            self.enemyCreateTime=0.3
+        elseif self.number==14 then
+            enermy=nil
+            enermy=Enermy14.new()
+            self.moveSpeed=300
+            self.enemyCreateTime=0.2
+        elseif self.number==15 then
+            enermy=nil
+            enermy=Enermy15.new()
+            self.moveSpeed=300
+            self.enemyCreateTime=0.1
+        end
+          enermy:pos(self.beginPoint.x, self.beginPoint.y)
+          enermy:addTo(self.map,1)
+          self.monster[#self.monster+1]=enermy
+          prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
+          self:enemyMove(enermy)
+          self.monsterNum=self.monsterNum+1
+        
+      end
+    end
+      self.handle= scheduler.scheduleGlobal(createMonster,1.5)
+  end
+   self.handle1= scheduler.scheduleGlobal(createE,30) 
+end
+
+function MyScene:createOneEnermy()
+   self.rad=math.random(1,3)
+    local enermy
+    local function createE()
+        if self.monsterNum==10 then  
+            scheduler.unscheduleGlobal(self.handle)
+            self.handle=nil
+            self.monsterNum=0
+            return
+        end
+         
+        enermy=Enermy.new()
+        self.moveSpeed=50
+        enermy:pos(self.beginPoint.x, self.beginPoint.y)
+        -- enermy.old_life=enermy.hp
+        enermy:addTo(self.map,1)
+        self.monster[#self.monster+1]=enermy
+        prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
+        local path = AStarFindRoute.init(prop)
+        self:enemyMove(enermy)
+        self.monsterNum=self.monsterNum+1
+    end
+    self.handle= scheduler.scheduleGlobal(createE,1.5)
+    
+end
+function MyScene:updata()
+
+    local function attackEnermy()
+        for k1,v1 in pairs(self.cannon) do
+            for k,v in pairs(self.monster) do
+                --计算敌人与炮塔的距离
+                local x= v:getPositionX()-v1:getPositionX()
+                local y= v:getPositionY()-v1:getPositionY()
+                local s = math.sqrt(x*x+y*y)
+                --如果距离小于武器的攻击范围，那么攻击
+                if v1.isdadedao==2 then
+                  if v.isCustom==true then
+                    if s<=v1.scope then 
+                        if v1.attack==true then
+                            v1.attack=false
+                            local delay = cc.DelayTime:create(v1.attackSpeed)
+                            local func= cc.CallFunc:create(function (even)
+                                even.attack=true
+                            end)
+                            local seq = cc.Sequence:create(delay,func)
+                            v1:runAction(seq)
+                            self:attack(v1,v)
+                        end
+                          break
+                    end
+                  end
+                end
+                if v1.isdadedao==1 then
+                  if v.isCustom==false then
+                    if s<=v1.scope then 
+                        if v1.attack==true then
+                            v1.attack=false
+                            local delay = cc.DelayTime:create(v1.attackSpeed)
+                            local func= cc.CallFunc:create(function (even)
+                                even.attack=true
+                            end)
+                            local seq = cc.Sequence:create(delay,func)
+                            v1:runAction(seq)
+                            self:attack(v1,v)
+                        end
+                          break
+                    end
+                  end
+                end
+                 if v1.isdadedao==3 then
+                    if s<=v1.scope then 
+                        if v1.attack==true then
+                            v1.attack=false
+                            local delay = cc.DelayTime:create(v1.attackSpeed)
+                            local func= cc.CallFunc:create(function (even)
+                                even.attack=true
+                            end)
+                            local seq = cc.Sequence:create(delay,func)
+                            v1:runAction(seq)
+                            self:attack(v1,v)
+                        end
+                          break
+                    end
+                end
+              
+            end
+        end 
+        if self.isWin and #self.monster==0 then
+            
+            
+             --修改数据
+            --self:modify()
+            local Win = WinLayer.new()
+            Win:setPosition(cc.p(0, 0))
+            self:addChild(Win,3)
+               
+
+        end
+    end
+    self.handle2= scheduler.scheduleGlobal(attackEnermy,0.1)
+end
+
+function MyScene:removeUpdata()
+    local function remove_nomove()
+        for k,v in pairs(self.monster) do
+          local rect1= v:getBoundingBox()
+          for k1,v1 in pairs(self.bullet) do
+            if v1.tag==100 then
+                    rect2=v1:getBoundingBox()
+
+                    if cc.rectIntersectsRect(rect2,rect1) then
+
+                        v.hp=v.hp-v1.firepower
+                        v.life:setScaleX(v.hp/v.old_life)
+                        v1:removeFromParent()
+                        v1=nil
+                        table.remove(self.bullet,k1)
+                    end 
+              elseif v1.tag==200 then
+                    rect2=v1:getBoundingBox()
+                    if cc.rectIntersectsRect(rect2,rect1) then
+                        v.hp=v.hp-v1.firepower
+                        v.life:setScaleX(v.hp/v.old_life)
+                        v1:removeFromParent()
+                        v1=nil
+                        table.remove(self.bullet,k1)
+                    end 
+                elseif v1.tag==300 then
+                    rect2=v1:getBoundingBox()
+                    if cc.rectIntersectsRect(rect2,rect1) then
+                        v.hp=v.hp-v1.firepower
+                        v.life:setScaleX(v.hp/v.old_life)
+                        v1:removeFromParent()
+                        v1=nil
+                        table.remove(self.bullet,k1)
+                    end 
+                elseif v1.tag==400 then
+                    rect2=v1:getBoundingBox()
+                    if cc.rectIntersectsRect(rect2,rect1) then
+                        v.hp=v.hp-v1.firepower
+                        v.life:setScaleX(v.hp/v.old_life)
+                        -- v1:stopAllActions()
+                        v1:removeFromParent()
+                        v1=nil
+                        table.remove(self.bullet,k1)
+                    end 
+                elseif v1.tag==500 then
+                    rect2=v1:getBoundingBox()
+                    if cc.rectIntersectsRect(rect2,rect1) then
+                        v.hp=v.hp-v1.firepower
+                        v.life:setScaleX(v.hp/v.old_life)
+                        table.remove(self.bullet,k1)
+                        v1:removeFromParent()
+                        v1=nil
+                        
+                    end 
+                end
+          end
+        end
+
+        for i=#self.monster,1,-1 do
+            if  self.monster[i].isMove==false then
+                    self.hp=self.hp-1
+                    if self.hp<1 then
+                        cc.Director:getInstance():pause()
+
+                        if self.handle~=nil then
+                            scheduler.unscheduleGlobal(self.handle)
+                        end
+                        if self.handle1~=nil then
+                            scheduler.unscheduleGlobal(self.handle1)
+                        end
+                        if self.handle2~=nil then
+                            scheduler.unscheduleGlobal(self.handle2)
+                        end
+                        if self.remove~=nil then
+                            scheduler.unscheduleGlobal(self.remove)
+                        end
+                        local loseLayer = LoseLayer.new()
+                        loseLayer:setPosition(cc.p(0, 0))
+                        self:addChild(loseLayer,3)
+                    end
+                    self.hpNumLabel:setString(self.hp)
+                    self.monster[i]:removeFromParent()
+                    table.remove(self.monster,i)
+                    v=nil
+            end
+            if self.monster[i]~=nil and self.monster[i].hp<=0 then
+               
+                --if self.monster[i]._hp~=1  then
+                   
+                --end
+                self.money=self.money+self.monster[i].money
+                self.moneyNumLabel:setString(self.money)
+                self.killEnermyNum=self.killEnermyNum+1
+                self.killEnermyNumLabel:setString(self.killEnermyNum)
+                self.monster[i]:removeFromParent()
+                table.remove(self.monster,i)
+            end
+        end
+        for i=#self.bullet,1,-1 do
+            if self.bullet[i].isMove==false  then
+                self.bullet[i]:removeFromParent()
+                table.remove(self.bullet,i)
+               
+            end
+        end
+
+    end
+    self.remove= scheduler.scheduleGlobal(handler(self, remove_nomove),0.01)
+end
+
+
 
 function MyScene:newRect(v)
     if v==nil then
@@ -717,22 +1172,50 @@ function MyScene:newRect(v)
     local rect = cc.rect(x-size.width/2, y-size.height/2,size.width, size.height)
     return rect
 end
+function MyScene:angle(v1,v)
+    local x = v1:getPositionX()-v:getPositionX()
+    local y = v1:getPositionY()-v:getPositionY()
+    
+    if x>0 then
+        if y==0 then
+           return 90
+        elseif y>0 then
+            return math.atan(x/y)*180/3.14
+        else
+            return math.atan(x/y)*180/3.14+180
+        end
+    else
+        if y>0 then
+            return math.atan(x/y)*180/3.14
+        elseif y==0 then
+            return -90
+        else
+            return math.atan(x/y)*180/3.14-180
+        end    
+    end
+end
 
---怪物移动
-function MyScene:enemyMove()
+function MyScene:onEnter()
+    --audio.playMusic("music/bg_music.mp3",true)
 
-	local  move = {}
-    --a*路径
-  local path = AStarFindRoute.init(prop)
-	local  enemy = self.map:getObjectGroup("object")
-	if table.nums(path)>0 then
-		for i = #path-1,1,-1 do
-			move[#move+1] = cc.MoveTo:create(1, cc.p((path[i].x-1)*64+32,((self.RowCount-path[i].y)*64+32)))
-		end
-	end
+end
 
-	local seq = cc.Sequence:create(move)
-	return seq
+function MyScene:onExit()
+  audio.pauseMusic()
+  audio.preloadMusic("music/fight.mp3")
+  audio.playMusic("music/fight.mp3",true)
+    if self.handle~=nil then
+        scheduler.unscheduleGlobal(self.handle)
+    end
+    if self.handle1~=nil then
+        scheduler.unscheduleGlobal(self.handle1)
+    end
+    if self.handle2~=nil then
+        scheduler.unscheduleGlobal(self.handle2)
+    end
+    if self.remove~=nil then
+       scheduler.unscheduleGlobal(self.remove)
+    end
 end
 
 
