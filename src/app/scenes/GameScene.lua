@@ -826,13 +826,8 @@ function GameScene:createZhujue()
      zhujue:setScale(0.5)
      self:addChild(zhujue)
   end
-     
-
-    --zhujue:new Zhujue()
-    --zhujue:setAnchorPoint(cc.p(0.5,0.5))
-    --zhujue:setPosition(cc.p(size.width-50,size.height-50)
-    
 end
+
 
 function GameScene:createEnermy()
   local function createE()
