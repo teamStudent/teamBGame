@@ -1178,7 +1178,9 @@ function GameScene:creatDongHua()
     local y = upv.y-self.endPoint.y
     timee = math.sqrt(x*x+y*y)/self.moveSpeed
     move[#move+1]=cc.MoveTo:create(timee,cc.p(self.endPoint.x, self.endPoint.y))
-
+    move[#move+1]=cc.CallFunc:create(function (event)
+        event.isMove=false
+    end)
     local seq = cc.Sequence:create(move)
     return seq
 end
@@ -1193,72 +1195,19 @@ function GameScene:updata()
                 local y= v:getPositionY()-v1:getPositionY()
                 local s = math.sqrt(x*x+y*y)
                 --如果距离小于武器的攻击范围，那么攻击
-                if v1.isdadedao==2 then
-                  if v.isCustom==true then
-                    if s<=v1.scope then 
-                        if v1.attack==true then
-                            v1.attack=false
-                            local delay = cc.DelayTime:create(v1.attackSpeed)
-                            local func= cc.CallFunc:create(function (even)
-                                even.attack=true
-                            end)
-                            local seq = cc.Sequence:create(delay,func)
-                            v1:runAction(seq)
-                            self:attack(v1,v)
-                        end
-                          break
+                if s<=v1.scope then 
+                    if v1.attack==true then
+                        v1.attack=false
+                        local delay = cc.DelayTime:create(v1.attackSpeed)
+                        local func= cc.CallFunc:create(function (even)
+                            even.attack=true
+                        end)
+                    local seq = cc.Sequence:create(delay,func)
+                        v1:runAction(seq)
+                        self:attack(v1,v)
                     end
-                  end
-                end
-                if v1.isdadedao==1 then
-                  if v.isCustom==false then
-                    if s<=v1.scope then 
-                        if v1.attack==true then
-                            v1.attack=false
-                            local delay = cc.DelayTime:create(v1.attackSpeed)
-                            local func= cc.CallFunc:create(function (even)
-                                even.attack=true
-                            end)
-                            local seq = cc.Sequence:create(delay,func)
-                            v1:runAction(seq)
-                            self:attack(v1,v)
-                        end
-                          break
-                    end
-                  end
-                end
-                 if v1.isdadedao==3 then
-                    if s<=v1.scope then 
-                        if v1.attack==true then
-                            v1.attack=false
-                            local delay = cc.DelayTime:create(v1.attackSpeed)
-                            local func= cc.CallFunc:create(function (even)
-                                even.attack=true
-                            end)
-                            local seq = cc.Sequence:create(delay,func)
-                            v1:runAction(seq)
-                            self:attack(v1,v)
-                        end
-                          break
-                    end
-                end
-                --else if v1.isdadedao==false then
-                    --if  v.isCustom==true then
-                        --if s<=v1.scope then
-                            --if v1.attack==true then
-                                --v1.attack=false
-                                --local delay = cc.DelayTime:create(v1.attackSpeed)
-                                --local func= cc.CallFunc:create(function (even)
-                                   --even.attack=true
-                                --end)
-                                --ocal seq = cc.Sequence:create(delay,func)
-                                --v1:runAction(seq)
-                                --self:attack(v1,v)
-                            --end
-                              --break
-                        --end
-                    --end
-                     
+                    break
+                end 
             end
         end 
         if self.isWin and #self.monster==0 then
