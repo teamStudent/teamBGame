@@ -45,3 +45,6 @@ Zhujue=require("app.Class.Zhujue")
 ISLILIAN = "isLiLian"
 LILIANTAINUM = "liLianTaiNum"
 LILIANOFHOUR = "LiLianOfHour"
+
+require("app.Astar.AStarFindRoute")
+MyScene = require("app.scenes.MyScene")

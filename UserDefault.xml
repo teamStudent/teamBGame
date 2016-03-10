@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <userDefaultRoot>
     <isLiLian>true</isLiLian>
+<<<<<<< HEAD
     <liLianTaiNum>2</liLianTaiNum>
     <LiLianOfHour>10</LiLianOfHour>
+=======
+    <liLianTaiNum>3</liLianTaiNum>
+    <LiLianOfHour>13</LiLianOfHour>
+>>>>>>> 068d598bc5fdc9e7aa23b2e16aea9dc287090e90
 </userDefaultRoot>
