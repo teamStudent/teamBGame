@@ -13,7 +13,7 @@ end
 function MyApp:run()
     cc.FileUtils:getInstance():addSearchPath("res/")
      cc.Director:getInstance():setContentScaleFactor(960/CONFIG_SCREEN_WIDTH)
-    self:enterScene("TestScene")
+    self:enterScene("StartScene")
 end
 
 return MyApp

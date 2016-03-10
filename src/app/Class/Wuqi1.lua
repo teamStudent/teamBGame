@@ -14,7 +14,7 @@ function Wuqi1:init()
 	self.currentLevel=1
 	self.up_level=1
 	self.make=80
-	self.scope=100
+	self.scope=500
 	self.firepower=10
 	self.attack=true
 	self.attackSpeed=0.5

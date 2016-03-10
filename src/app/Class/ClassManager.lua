@@ -44,4 +44,13 @@ Lilian=require("app.scenes.Lilian")
 
 ISLILIAN = "isLiLian"
 LILIANTAINUM = "liLianTaiNum"
-LILIANOFHOUR = "LiLianOfHour"
+LILIANOFTIME = "LiLianOfTime"
+FRISTLILIAN = "FristLiLian"
+WUQI1GRADE = "WuQi1Grade"
+WUQI2GRADE = "WuQi2Grade"
+WUQI3GRADE = "WuQi3Grade"
+WUQI4GRADE = "WuQi4Grade"
+WUQI5GRADE = "WuQi5Grade"
+
+require("app.Astar.AStarFindRoute")
+MyScene = require("app.scenes.MyScene")

@@ -18,13 +18,24 @@ function StartScene:init()
 	bg:setPosition(cc.p(display.cx,display.cy))
 	self:addChild(bg)
                        
-     self._startButton = cc.ui.UIPushButton.new({normal="StartScene/add.png"},{scale9=true})
+
+
+	-- local starbt = cc.ui.UIPushButton.new({normal = "add.png"},{scale9=true})
+	-- 				:onButtonClicked (function(event)
+	-- 				display.replaceScene(GameScene.new())
+	-- 				end)
+	-- 				:pos(display.cx, display.cy-200)
+	-- 				:addTo(self,1)             
+    
+
+     self._startButton = cc.ui.UIPushButton.new({normal="add.png"},{scale9=true})
                        :onButtonClicked(function(event)
                         display.replaceScene(SelectScene.new())
                        end)
-                       :pos(display.cx, display.cy-30)
+                       :pos(display.cx, display.cy)
                        :addTo(self)
                        :setScale(1.5)
+
     self._liLianButton = cc.ui.UIPushButton.new({normal="StartScene/liLian.png"},{scale9=true})
     					:onButtonClicked(function (event)
     						--display.replaceScene(require("app.scenes.Lilian").new(), "fade",  0.5, display.COLOR_WHITE)

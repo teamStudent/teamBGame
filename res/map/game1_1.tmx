@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="64" tileheight="64" nextobjectid="11">
+ <tileset firstgid="1" name="map" tilewidth="64" tileheight="64">
+  <image source="map.png" width="512" height="512"/>
+ </tileset>
+ <layer name="showLayer" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJwzZmBgMEbDDFjEiMWk6EVXiwyI0UusWlLcQ677kfXicxshd1PiH0L20RMAAASsE4c=
+  </data>
+ </layer>
+ <objectgroup name="object" opacity="0.9">
+  <object id="2" name="end" x="917.334" y="24.6667" width="24.6667" height="21.3333"/>
+  <object id="4" name="begin" x="16.6667" y="20.6667" width="26" height="24"/>
+  <object id="5" name="wuqi1" x="352" y="545.333" width="40" height="21.3333"/>
+  <object id="7" name="wuqi2" x="432" y="542.667" width="40" height="21.3333"/>
+  <object id="8" name="wuqi3" x="494.667" y="541.333" width="40" height="21.3333"/>
+  <object id="9" name="wuqi4" x="561.333" y="542.667" width="40" height="21.3333"/>
+  <object id="10" name="wuqi5" x="626.667" y="542.667" width="40" height="21.3333"/>
+ </objectgroup>
+ <layer name="layer" width="15" height="10">
+  <data encoding="base64" compression="zlib">
+   eJxjYMAEyljEiAWk6LXEoheGidELw9QCpJpnicaG8fH5g5C7qR32ihRgSgAA/VcF+g==
+  </data>
+ </layer>
+</map>
