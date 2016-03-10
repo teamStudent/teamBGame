@@ -15,12 +15,11 @@ function Enermy:ctor()
 	self.isCustom = false
 	self.money=10
 	self.moveSpeed=50
-	self.exp=5
+	self.exp=1
 	self.life=cc.Sprite:create("enermy/life.png")
 	self.life:setAnchorPoint(cc.p(0,0.5))
 	self.life:pos(0,45)
 	self.life:addTo(self)
-	
 
 
 	 -- self:startAnimation()

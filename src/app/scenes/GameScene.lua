@@ -36,6 +36,7 @@ function GameScene:init()
     self.monsterNum=0     --怪物数
     self.number=1    --波数
     self.killEnermyNum=0  --杀敌数
+    self.exper=0  --经验
     self.hp=10    
        --血量
     self.isWin=false
@@ -1367,8 +1368,8 @@ function GameScene:removeUpdata()
                 --end
                 self.money=self.money+self.monster[i].money
                 self.moneyNumLabel:setString(self.money)
-                self.exp=self.monster[i].exp
-                print(self.exp)
+                self.exper=self.exper+self.monster[i].exp
+                print(self.exper)
                 self.killEnermyNum=self.killEnermyNum+1
                 self.killEnermyNumLabel:setString(self.killEnermyNum)
                 self.monster[i]:removeFromParent()
