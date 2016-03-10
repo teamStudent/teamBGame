@@ -975,7 +975,7 @@ function MyScene:createOneEnermy()
 end
 function MyScene:updata()
 
-    local function attackEnermy()
+   local function attackEnermy()
         for k1,v1 in pairs(self.cannon) do
             for k,v in pairs(self.monster) do
                 --计算敌人与炮塔的距离
@@ -983,63 +983,26 @@ function MyScene:updata()
                 local y= v:getPositionY()-v1:getPositionY()
                 local s = math.sqrt(x*x+y*y)
                 --如果距离小于武器的攻击范围，那么攻击
-                if v1.isdadedao==2 then
-                  if v.isCustom==true then
-                    if s<=v1.scope then 
-                        if v1.attack==true then
-                            v1.attack=false
-                            local delay = cc.DelayTime:create(v1.attackSpeed)
-                            local func= cc.CallFunc:create(function (even)
-                                even.attack=true
-                            end)
-                            local seq = cc.Sequence:create(delay,func)
-                            v1:runAction(seq)
-                            self:attack(v1,v)
-                        end
-                          break
+                if s<=v1.scope then 
+                    if v1.attack==true then
+                        v1.attack=false
+                        local delay = cc.DelayTime:create(v1.attackSpeed)
+                        local func= cc.CallFunc:create(function (even)
+                            even.attack=true
+                        end)
+                    local seq = cc.Sequence:create(delay,func)
+                        v1:runAction(seq)
+                        self:attack(v1,v)
                     end
-                  end
-                end
-                if v1.isdadedao==1 then
-                  if v.isCustom==false then
-                    if s<=v1.scope then 
-                        if v1.attack==true then
-                            v1.attack=false
-                            local delay = cc.DelayTime:create(v1.attackSpeed)
-                            local func= cc.CallFunc:create(function (even)
-                                even.attack=true
-                            end)
-                            local seq = cc.Sequence:create(delay,func)
-                            v1:runAction(seq)
-                            self:attack(v1,v)
-                        end
-                          break
-                    end
-                  end
-                end
-                 if v1.isdadedao==3 then
-                    if s<=v1.scope then 
-                        if v1.attack==true then
-                            v1.attack=false
-                            local delay = cc.DelayTime:create(v1.attackSpeed)
-                            local func= cc.CallFunc:create(function (even)
-                                even.attack=true
-                            end)
-                            local seq = cc.Sequence:create(delay,func)
-                            v1:runAction(seq)
-                            self:attack(v1,v)
-                        end
-                          break
-                    end
-                end
-              
+                    break
+                end 
             end
         end 
         if self.isWin and #self.monster==0 then
             
             
              --修改数据
-            --self:modify()
+            self:modify()
             local Win = WinLayer.new()
             Win:setPosition(cc.p(0, 0))
             self:addChild(Win,3)
