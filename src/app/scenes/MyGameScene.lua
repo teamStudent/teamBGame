@@ -24,12 +24,12 @@ function MyGameScene:init()
           particle:pos(display.cx, display.cy)
           self:addChild(particle)
 
-	local enterBtn = cc.ui.UIPushButton.new({normal="stargame.png"},{scale9=true})
+	local enterBtn = cc.ui.UIPushButton.new({normal="return.png"},{scale9=true})
                    :onButtonClicked(function(event)
                    --display.replaceScene(require("app/scenes/StarScene"):new())
                    display.replaceScene(StartScene.new())
                    end)
-                   :pos(display.cx, display.cy)
+                   :pos(100,600)
                    :addTo(self,1)
 
 end
