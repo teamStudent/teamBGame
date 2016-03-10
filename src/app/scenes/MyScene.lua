@@ -71,7 +71,7 @@ function MyScene:initMapInfo()
 
 	  self.hero=self.map:getObjectGroup("object")
     self.showLayer=self.map:getLayer("showLayer")
-    self.layer = self.map:getLayer("layer")
+    --self.layer = self.map:getLayer("layer")
     --self.showLayer:hide()
 
     self.beginPoint = self.hero:getObject("begin")
