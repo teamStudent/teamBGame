@@ -1369,10 +1369,13 @@ function GameScene:removeUpdata()
                 --end
                 self.money=self.money+self.monster[i].money
                 self.moneyNumLabel:setString(self.money)
+                self.exp=self.monster[i].exp
+                print(self.exp)
                 self.killEnermyNum=self.killEnermyNum+1
                 self.killEnermyNumLabel:setString(self.killEnermyNum)
                 self.monster[i]:removeFromParent()
                 table.remove(self.monster,i)
+                
             end
         end
         for i=#self.bullet,1,-1 do
