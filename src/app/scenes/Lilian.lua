@@ -5,15 +5,47 @@
 -- require("config")
 -- require("framework.init")
 -- local scheduler = require("framework.scheduler")
---
+
+local scheduler=require(cc.PACKAGE_NAME..".scheduler")
+
 local Lilian=class("Lilian", function ()
 	return display.newScene("Lilian")
 end)
 
 function Lilian:ctor()
-	--月
-	print(os.date("%m"))
+	self:initData()
 	self:init()
+	self:update()
+end
+
+function Lilian:initData()
+	if cc.UserDefault:getInstance():getBoolForKey(FRISTLILIAN) == false then
+		for i=1,5 do
+			cc.UserDefault:getInstance():setIntegerForKey("WUQI"..i.."GRADE", 1)
+		end
+		cc.UserDefault:getInstance():setBoolForKey(FRISTLILIAN, true)
+	end
+end
+
+function Lilian:update()
+	local function judgeLiLianOver()
+		if cc.UserDefault:getInstance():getBoolForKey(ISLILIAN) then
+			local nowTime = os.time()
+			local oldTime = cc.UserDefault:getInstance():getIntegerForKey(LILIANOFTIME)
+			local grade = cc.UserDefault:getInstance():getIntegerForKey("WUQI"..cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM).."GRADE")
+			local hour = (nowTime - oldTime)-- / 3600
+
+			if hour >= 20 then
+				cc.UserDefault:getInstance():setBoolForKey(ISLILIAN, false)
+				cc.UserDefault:getInstance():setIntegerForKey("WUQI"..cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM).."GRADE", grade+1)
+				cc.UserDefault:getInstance():setIntegerForKey(LILIANTAINUM, 0)
+				self.paoTai:runAction(cc.Sequence:create(cc.FadeOut:create(0.5), cc.RemoveSelf:create()))
+				-- self.paoTai:removeFromParent()
+				scheduler.unscheduleGlobal(self.handle)
+			end
+		end
+	end
+	self.handle = scheduler.scheduleGlobal(judgeLiLianOver, 1)
 end
 
 function Lilian:init()
@@ -65,16 +97,16 @@ function Lilian:init()
 		local liLianBtn = cc.ui.UIPushButton.new({normal="LiLianScene/liLian.png"}, {scale9=true})
 							:onButtonClicked(function(event)
 								if cc.UserDefault:getInstance():getBoolForKey(ISLILIAN) == false then
-								local paoTai = display.newSprite("wuqi"..i..".png")
+								self.paoTai = display.newSprite("wuqi"..i..".png")
 												:setPosition(liLian_item:convertToWorldSpace(cc.p(0,0)))
 												:setScale(0.0)
 												:addTo(self)
-												:runAction(cc.Spawn:create(
+								self.paoTai:runAction(cc.Spawn:create(
 													cc.MoveTo:create(1.0, cc.p(display.width*4.0/6, display.cy)),
 													cc.ScaleTo:create(1.0, 1.0, 1.0)))
 								cc.UserDefault:getInstance():setBoolForKey(ISLILIAN, true)
 								cc.UserDefault:getInstance():setIntegerForKey(LILIANTAINUM, i)
-								cc.UserDefault:getInstance():setIntegerForKey(LILIANOFHOUR, os.date("%H"))
+								cc.UserDefault:getInstance():setIntegerForKey(LILIANOFTIME, os.time())
 								end
 							end)
 							:setPosition(cc.p(display.width/10 + 200, display.height*(2*i - 1)/6))
@@ -82,11 +114,18 @@ function Lilian:init()
 	end
 
 	if cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM) ~= 0 then
-		local paoTai = display.newSprite("wuqi"..cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM)..".png")
-		paoTai:setPosition(cc.p(display.width*4.0/6, display.cy))
-		self:addChild(paoTai)
+		self.paoTai = display.newSprite("wuqi"..cc.UserDefault:getInstance():getIntegerForKey(LILIANTAINUM)..".png")
+		self.paoTai:setPosition(cc.p(display.width*4.0/6, display.cy))
+		self:addChild(self.paoTai)
 	end
+end
 
+function Lilian:onEnter()
+
+end
+
+function Lilian:onExit()
+	scheduler.unscheduleGlobal(self.handle)
 end
 
 return Lilian
