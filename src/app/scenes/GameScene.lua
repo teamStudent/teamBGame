@@ -15,6 +15,8 @@ local chapterNum
 local totalNumber
 local enermyTypeNum
 local totalNumber 
+local mapdata
+local prop 
 local scheduler=require(cc.PACKAGE_NAME..".scheduler")
 function GameScene:init()
   local tb = PublicData.SCENETABLE
@@ -23,7 +25,8 @@ function GameScene:init()
   totalNumber =Data.SCENE[sceneNum][chapterNum].number
   self.money=Data.SCENE[sceneNum][chapterNum].money
 
-  
+
+  --背景图
 	local bg = display.newSprite("GameScene/sceneBg"..sceneNum..".png")
 	local scaleX = display.width/bg:getContentSize().width
   local scaleY = display.height/bg:getContentSize().height
@@ -31,15 +34,32 @@ function GameScene:init()
   bg:pos(display.cx, display.cy)
   self:addChild(bg)
  
-
+  --地图元素
+  self.ColCount = 15
+  self.RowCount = 10
+  mapdata = {}
+  for i = 1, self.ColCount do
+    mapdata[i] = {}
+    for j = 1, self.RowCount do
+    mapdata[i][j] = 0
+    end
+  end
   local path="map/game"..sceneNum.."-"..chapterNum..".tmx"
+    --数据
     self.monsterNum=0     --怪物数
     self.number=1    --波数
     self.killEnermyNum=0  --杀敌数
+<<<<<<< HEAD
     self.exper=0  --经验
     self.hp=10    
        --血量
     self.isWin=false
+=======
+    self.hp=10   
+    self.isWin=false 
+
+
+>>>>>>> a96f3f5da05d797b4455d90c970212fc7e2a4821
     self.tileMap =cc.TMXTiledMap:create(path)
     self.tileMap:addTo(self)
     self.hero=self.tileMap:getObjectGroup("object")
@@ -47,8 +67,29 @@ function GameScene:init()
     self.showLayer=self.tileMap:getLayer("showLayer")
     self.showLayer:hide()
 
+    self.beginPoint = self.hero:getObject("begin")
+    self.endPoint = self.hero:getObject("end")
     --开始点
     -- self.beginPoint= self.hero:getObject("begin")
+    --终点旗帜
+    local qizi = display.newSprite("GameScene/qizi.png"):pos(self.endPoint.x, self.endPoint.y):addTo(self.tileMap,1)
+    qizi:setAnchorPoint(cc.p(0,0))
+
+        --代理传值
+    prop = {}
+    prop.col =self.ColCount
+    prop.row = self.RowCount
+    prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
+    prop.endPos = { x = math.floor(self.endPoint.x/64)+1, y =  math.floor((640-self.endPoint.y)/64)+1 }
+    prop.getV = function(i,j)
+        local Gid = self.showLayer:getTileGIDAt(cc.p(i-1,j-1))
+        if Gid > 0 then
+          if mapdata[i][j] == 0 then
+            return 0  
+          end
+        end  
+        return 1 
+  end
 
     
     self.wuqi1Point=self.hero:getObject("wuqi1")
@@ -57,7 +98,7 @@ function GameScene:init()
     self.wuqi4Point=self.hero:getObject("wuqi4")
     self.wuqi5Point=self.hero:getObject("wuqi5")
 
-
+    --粒子特效
     local rain=cc.ParticleRain:createWithTotalParticles(2000)
      -- snow:setTexture( cc.Director:getInstance():getTextureCache():addImage("GameScene/flower.png"))
      rain:pos(display.cx, display.top)
@@ -102,12 +143,8 @@ function GameScene:init()
   :align(display.CENTER, display.cx-10, display.top-20)
   :addTo(self.tileMap,1)
 
-    local sp = display.newSprite("add.png")
+  local sp = display.newSprite("add.png")
   sp:setPosition(cc.p(0,0))
-  --local scaleX = display.width/sp:getContentSize().width
-  --local scaleY = display.height/sp:getContentSize().height
-  --sp:setScale(scaleX,scaleY)
-  --sp:pos(display.cx,display.cy)
   self:addChild(sp)
 
  --显示血量
@@ -123,6 +160,7 @@ function GameScene:init()
   :align(display.CENTER, (display.cx+display.right)/2+30, display.top-20)
   :addTo(self,1)
 
+  --暂停按钮
   local stopBtn = cc.ui.UIPushButton.new({normal = "GameScene/stopBtn.png"}, {scale9 = true})
   stopBtn:onButtonClicked(function(event)
     cc.Director:getInstance():pause()
@@ -181,7 +219,6 @@ function GameScene:addEventListen()
                       local y= v:getPositionY()-v1:getPositionY()
                       local s = math.sqrt(x*x+y*y)
                       --如果距离小于武器的攻击范围，那么攻击
-                      --if v1.isdadedao==true then
                           if s<=v1.scope then 
                               if v1.attack==true then
                                   v1.attack=false
@@ -195,7 +232,6 @@ function GameScene:addEventListen()
                               end
                                 break
                           end
-                      --end 
                   end  
               end
           end
@@ -310,10 +346,12 @@ function GameScene:upOrDownConnon()
     :addTo(self.scope,3)
 end
 
+function GameScene:changePath(enemy)
+    enemy:stopAllActions()
+    self:enemyMove(enemy)
+end
 
 function GameScene:testTouch()
-
-
     local money1 = display.newSprite("GameScene/money.png")
     money1:pos(self.wuqi1Point.x-2,display.bottom+3)
     money1:setScale(0.4)
@@ -351,8 +389,11 @@ function GameScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -370,6 +411,10 @@ function GameScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
+            
         end
         
     end)
@@ -414,8 +459,11 @@ function GameScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -433,6 +481,9 @@ function GameScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
     end)
   
@@ -475,8 +526,11 @@ function GameScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -494,6 +548,9 @@ function GameScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
         
     end)
@@ -536,8 +593,11 @@ function GameScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
@@ -555,6 +615,9 @@ function GameScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
         
     end)
@@ -595,14 +658,16 @@ function GameScene:testTouch()
             local x= event.x/64
             local y = (640-event.y)/64
             local tileGid = self.showLayer:getTileGIDAt(cc.p(math.floor(x),math.floor(y)))
-            if tileGid<=0 then
+            mapdata[math.floor(x)+1][math.floor(y)+1] = 1
+            local path = AStarFindRoute.init(prop)
+            if tileGid<=0 or next(path) == nil then
                 self.addSp:removeFromParent()
+                mapdata[math.floor(x)+1][math.floor(y)+1] = 0
                 return
             end
             for k,v in pairs(self.cannon) do
                 local rect1= self:newRect(v)
                 if cc.rectContainsPoint(rect1,cc.p(event.x,event.y)) then
-                  
                     self.addSp:removeFromParent()
                     return
                 end
@@ -615,6 +680,9 @@ function GameScene:testTouch()
             self.cannon[#self.cannon+1]=self.addSp
             self.money=self.money-self.addSp.make
             self.moneyNumLabel:setString(self.money)
+            for k,v in pairs(self.monster) do
+                self:changePath(v)
+            end
         end
         
     end)
@@ -638,16 +706,6 @@ function GameScene:attack(v1,v)
 
     local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
     local func = cc.CallFunc:create(function (bullet)
-    -- if bullet~=nil then
-    --    local x =table.keyof(self.bullet, bullet)
-    --         -- local y=table.removebyvalue(self.bullet, bullet, true)
-    --        -- local x=table.indexof(self.bullet, bullet, 1)
-    --        --  table.remove(self.bullet,x)
-    --        bullet:stopAllActions()
-    --       bullet:removeFromParent() 
-    --       bullet = nil
-    --        table.remove(self.bullet,x)
-    --   end
     self.bullet[#self.bullet+1]=bullet
     bullet.isMove=false
     end)
@@ -665,14 +723,6 @@ function GameScene:attack(v1,v)
     bullet:setRotation(v1:getRotation())
     local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
     local func = cc.CallFunc:create(function(bullet)
-    -- if bullet~=nil then
-    --       local x =table.keyof(self.bullet, bullet)
-    --         -- local y=table.removebyvalue(self.bullet, bullet, true)
-           
-    --       bullet:removeFromParent() 
-    --       bullet = nil
-    --        table.remove(self.bullet,x)
-    --   end
     self.bullet[#self.bullet+1]=bullet
       bullet.isMove=false
     end)
@@ -691,15 +741,7 @@ function GameScene:attack(v1,v)
     bullet:setPosition(v1:getPositionX(),v1:getPositionY())
     local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
     local func = cc.CallFunc:create(function (bullet)
-    
-    -- if bullet~=nil then
-    --       local x =table.keyof(self.bullet, bullet)
-    --         -- local y=table.removebyvalue(self.bullet, bullet, true)
-            
-    --       bullet:removeFromParent() 
-    --       bullet = nil
-    --       table.remove(self.bullet,x)
-    --   end
+  
     self.bullet[#self.bullet+1]=bullet
     bullet.isMove=false
     end)
@@ -715,26 +757,6 @@ function GameScene:attack(v1,v)
        bullet:setAnchorPoint(cc.p(0.5,0.5))
        self.bullet[#self.bullet+1]=bullet
        local delay=cc.DelayTime:create(2)
-    --    local x = v:getPositionX() - v1:getPositionX()
-    --    local y = v:getPositionY() - v1:getPositionY()
-    
-    --    local bezier = {
-    --     cc.p(v1:getPositionX(), v1:getPositionY()),
-    --     cc.p(v1:getPositionX()+x/2, v1:getPositionY()+y/2+200),
-    --     cc.p(v:getPositionX(), v:getPositionY()),
-    --     }
-    --    local bezierForward = cc.BezierTo:create(0.2, bezier)
-    
-    --    local func = cc.CallFunc:create(function (event)
-    --    self.bullet[#self.bullet+1]=bullet
-    --   end)
-   
-    -- local png = "GameScene/boon.png"
-    -- local plist = "GameScene/boon.plist"
-    -- display.addSpriteFrames(plist,png)
-    -- local frames = display.newFrames("%d.png",1,6)
-    -- local animation = display.newAnimation(frames,0.01)
-    -- local animate = cc.Animate:create(animation)
 
     local func = cc.CallFunc:create(function (bullet)
           
@@ -751,40 +773,12 @@ function GameScene:attack(v1,v)
     bullet:runAction(seq)
         
   elseif v1:getTag()==40 then
-       -- radious=v1.scope
-       -- local move
-      -- for i=1,9 do
         bullet = Bullet4.new()
         local move=cc.MoveTo:create(0.2,cc.p(v:getPositionX(),v:getPositionY()))
-        -- if i==1 then
-        --     move=cc.MoveBy:create(0.5, cc.p(radious, 0))
-        -- elseif i==2 then
-        --     move=cc.MoveBy:create(0.5, cc.p(radious*math.sin(45),radious*math.sin(45)))
-        -- elseif i==3 then
-        --     move=cc.MoveBy:create(0.5, cc.p(0,radious))
-        -- elseif i==4 then
-        --     move=cc.MoveBy:create(0.5, cc.p(-radious*math.sin(45*3.14/180), radious*math.sin(45*3.14/180)))
-        -- elseif i==5 then
-        --     move=cc.MoveBy:create(0.5, cc.p(-radious, 0))
-        -- elseif i==6 then
-        --     move=cc.MoveBy:create(0.5, cc.p(-radious*math.sin(45*3.14/180),-radious*math.sin(45*3.14/180)))
-        -- elseif i==7 then
-        --     move=cc.MoveBy:create(0.5, cc.p(0,-radious))
-        -- elseif i==8 then
-        --     move=cc.MoveBy:create(0.5, cc.p(radious*math.sin(45*3.14/180),-radious*math.sin(45*3.14/180)))
-        -- end
         local func = cc.CallFunc:create(function (bullet)
 
            self.bullet[#self.bullet+1]=bullet
             bullet.isMove=false
-          --  if bullet~=nil then
-          --   -- local x =table.keyof(self.bullet, bullet)
-          --   -- local y=table.removebyvalue(self.bullet, bullet, true)
-          --   local x=table.indexof(self.bullet, bullet, 1)
-          --   table.remove(self.bullet,x)
-          --   bullet:removeFromParent() 
-          --   bullet = nil
-          -- end
             
         end)
 
@@ -794,8 +788,7 @@ function GameScene:attack(v1,v)
         bullet:setPosition(v1:getPositionX(),v1:getPositionY())
         bullet:addTo(self.tileMap,3)  
         bullet:runAction(seq)
-        bullet.firepower=v1.firepower
-        -- end   
+        bullet.firepower=v1.firepower  
   end
     
 end
@@ -809,6 +802,27 @@ function GameScene:newRect(v)
     local y = v:getPositionY()
     local rect = cc.rect(x-size.width/2, y-size.height/2,size.width, size.height)
     return rect
+end
+
+--怪物移动
+function GameScene   :enemyMove(enemy)
+
+  prop.startPos = { x = math.floor(enemy:getPositionX()/64)+1 , y = math.floor((640-enemy:getPositionY())/64)+1}
+  local path = AStarFindRoute.init(prop)
+
+  local  move = {}
+  
+  if table.nums(path)>0 then
+    for i = #path-1,1,-1 do
+      move[#move+1] = cc.MoveTo:create(60/enemy.moveSpeed, cc.p((path[i].x-1)*64+32,((self.RowCount-path[i].y)*64+32)))
+    end
+    move[#move+1]=cc.CallFunc:create(function (event)
+    event.isMove=false
+      end)
+  end
+
+  local seq = cc.Sequence:create(move)
+  enemy:runAction(seq)
 end
 
 function GameScene:createEnermy()
@@ -928,103 +942,14 @@ function GameScene:createEnermy()
           enermy:pos(self.beginPoint.x, self.beginPoint.y)
           enermy:addTo(self.tileMap,1)
           self.monster[#self.monster+1]=enermy
-          enermy:runAction(self:creatDongHua())
+          prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
+          self:enemyMove(enermy)
           self.monsterNum=self.monsterNum+1
         
       end
     end
 
-    -- if self.enemyCreateTime==1.5 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,1.5)
-    -- elseif self.enemyCreateTime==1.4 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --     self.handle= scheduler.scheduleGlobal(createMonster,1.4)
-    -- elseif self.enemyCreateTime==1.3 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,1.3)
-    -- elseif self.enemyCreateTime==1.2 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,1.2)
-    -- elseif self.enemyCreateTime==1.1 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,1.1)
-    -- elseif self.enemyCreateTime==1 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,1)
-    -- elseif self.enemyCreateTime==0.9 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --     self.handle= scheduler.scheduleGlobal(createMonster,0.9)
-    -- elseif self.enemyCreateTime==0.8 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,0.8)
-    -- elseif self.enemyCreateTime==0.7 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,0.7)
-    -- elseif self.enemyCreateTime==0.6 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,0.6)
-    -- elseif self.enemyCreateTime==0.5 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --     self.handle= scheduler.scheduleGlobal(createMonster,0.5)
-    -- elseif self.enemyCreateTime==0.4 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,0.4)
-    -- elseif self.enemyCreateTime==0.3 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,0.3)
-    -- elseif self.enemyCreateTime==0.2 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
-    --   self.handle= scheduler.scheduleGlobal(createMonster,0.2)
-    -- elseif self.enemyCreateTime==0.1 then
-    --   if self.handle~=nil then
-    --     scheduler.unscheduleGlobal(self.handle)
-    --     self.handle=nil
-    --    end
       self.handle= scheduler.scheduleGlobal(createMonster,1.5)
-    -- end
 
   end
    self.handle1= scheduler.scheduleGlobal(createE,40)
@@ -1064,10 +989,10 @@ function GameScene:createOneEnermy()
         enermy=Enermy.new()
         self.moveSpeed=50
         enermy:pos(self.beginPoint.x, self.beginPoint.y)
-        -- enermy.old_life=enermy.hp
         enermy:addTo(self.tileMap,1)
         self.monster[#self.monster+1]=enermy
-        enermy:runAction(self:creatDongHua())
+        prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
+        self:enemyMove(enermy)
         self.monsterNum=self.monsterNum+1
     end
     self.handle= scheduler.scheduleGlobal(createE,1.5)
@@ -1099,92 +1024,92 @@ function GameScene:angle(v1,v)
 end
 
 
-function GameScene:creatDongHua()
-  local move={}
+-- function GameScene:creatDongHua()
+--   local move={}
 
-    local enermy=self.hero:getObjects()
+--     local enermy=self.hero:getObjects()
     
-    local i=1
-    local timee
+--     local i=1
+--     local timee
 
-    if chapterNum>3 and self.rad==2 then
-       i=11
-       for k,v in pairs(enermy) do
-        local name1="tag"..i
-        if v.name==name1 then
-            if i==11 then
-                local x= self.beginPoint.x-v.x
-                local y = self.beginPoint.y-v.y
-                timee = math.sqrt(x*x+y*y)/self.moveSpeed
-            else
-                local str = "tag"..(i-1)
-                local upv = self.hero:getObject(str)
-                local x= upv.x-v.x
-                local y = upv.y-v.y
-                timee = math.sqrt(x*x+y*y)/self.moveSpeed
-            end
-            i=i+1
+--     if chapterNum>3 and self.rad==2 then
+--        i=11
+--        for k,v in pairs(enermy) do
+--         local name1="tag"..i
+--         if v.name==name1 then
+--             if i==11 then
+--                 local x= self.beginPoint.x-v.x
+--                 local y = self.beginPoint.y-v.y
+--                 timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--             else
+--                 local str = "tag"..(i-1)
+--                 local upv = self.hero:getObject(str)
+--                 local x= upv.x-v.x
+--                 local y = upv.y-v.y
+--                 timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--             end
+--             i=i+1
 
-            move[#move+1]=cc.MoveTo:create(timee,cc.p(v.x,v.y))
-        end
-    end
-    elseif chapterNum>5 and self.rad==3 then
-      i=21
-       for k,v in pairs(enermy) do
-        local name1="tag"..i
-        if v.name==name1 then
-            if i==21 then
-                local x= self.beginPoint.x-v.x
-                local y = self.beginPoint.y-v.y
-                timee = math.sqrt(x*x+y*y)/self.moveSpeed
-            else
-                local str = "tag"..(i-1)
-                local upv = self.hero:getObject(str)
-                local x= upv.x-v.x
-                local y = upv.y-v.y
-                timee = math.sqrt(x*x+y*y)/self.moveSpeed
-            end
-            i=i+1
+--             move[#move+1]=cc.MoveTo:create(timee,cc.p(v.x,v.y))
+--         end
+--     end
+--     elseif chapterNum>5 and self.rad==3 then
+--       i=21
+--        for k,v in pairs(enermy) do
+--         local name1="tag"..i
+--         if v.name==name1 then
+--             if i==21 then
+--                 local x= self.beginPoint.x-v.x
+--                 local y = self.beginPoint.y-v.y
+--                 timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--             else
+--                 local str = "tag"..(i-1)
+--                 local upv = self.hero:getObject(str)
+--                 local x= upv.x-v.x
+--                 local y = upv.y-v.y
+--                 timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--             end
+--             i=i+1
 
-            move[#move+1]=cc.MoveTo:create(timee,cc.p(v.x,v.y))
-        end
-    end
-    else
-      i=1
-        for k,v in pairs(enermy) do
-        local name1="tag"..i
-        if v.name==name1 then
-            if i==1 then
-                local x= self.beginPoint.x-v.x
-                local y = self.beginPoint.y-v.y
-                timee = math.sqrt(x*x+y*y)/self.moveSpeed
-            else
-                local str = "tag"..(i-1)
-                local upv = self.hero:getObject(str)
-                local x= upv.x-v.x
-                local y = upv.y-v.y
-                timee = math.sqrt(x*x+y*y)/self.moveSpeed
-            end
-            i=i+1
+--             move[#move+1]=cc.MoveTo:create(timee,cc.p(v.x,v.y))
+--         end
+--     end
+--     else
+--       i=1
+--         for k,v in pairs(enermy) do
+--         local name1="tag"..i
+--         if v.name==name1 then
+--             if i==1 then
+--                 local x= self.beginPoint.x-v.x
+--                 local y = self.beginPoint.y-v.y
+--                 timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--             else
+--                 local str = "tag"..(i-1)
+--                 local upv = self.hero:getObject(str)
+--                 local x= upv.x-v.x
+--                 local y = upv.y-v.y
+--                 timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--             end
+--             i=i+1
 
-            move[#move+1]=cc.MoveTo:create(timee,cc.p(v.x,v.y))
-        end
-    end
-    end
+--             move[#move+1]=cc.MoveTo:create(timee,cc.p(v.x,v.y))
+--         end
+--     end
+--     end
 
    
-    local str = "tag"..(i-1)
-    local upv = self.hero:getObject(str)
-    local x= upv.x-self.endPoint.x
-    local y = upv.y-self.endPoint.y
-    timee = math.sqrt(x*x+y*y)/self.moveSpeed
-    move[#move+1]=cc.MoveTo:create(timee,cc.p(self.endPoint.x, self.endPoint.y))
-    move[#move+1]=cc.CallFunc:create(function (event)
-        event.isMove=false
-    end)
-    local seq = cc.Sequence:create(move)
-    return seq
-end
+--     local str = "tag"..(i-1)
+--     local upv = self.hero:getObject(str)
+--     local x= upv.x-self.endPoint.x
+--     local y = upv.y-self.endPoint.y
+--     timee = math.sqrt(x*x+y*y)/self.moveSpeed
+--     move[#move+1]=cc.MoveTo:create(timee,cc.p(self.endPoint.x, self.endPoint.y))
+--     move[#move+1]=cc.CallFunc:create(function (event)
+--         event.isMove=false
+--     end)
+--     local seq = cc.Sequence:create(move)
+--     return seq
+-- end
 
 function GameScene:updata()
 
@@ -1325,6 +1250,12 @@ function GameScene:removeUpdata()
 
                         v.hp=v.hp-v1.firepower
                         v.life:setScaleX(v.hp/v.old_life)
+                        --------特效
+                        local particle = cc.ParticleSystemQuad:create("ExplodingRing.plist")
+                              particle:setPosition(cc.p(40, 40))
+                              particle:setScale(0.2)
+                              particle:addTo(v)
+                        v:stopAllActions()
                         v1:removeFromParent()
                         v1=nil
                         table.remove(self.bullet,k1)
@@ -1473,5 +1404,13 @@ function GameScene:onExit()
     if self.remove~=nil then
        scheduler.unscheduleGlobal(self.remove)
     end
+end
+
+
+function GameScene:Texiao()
+      v:stopAllActions()
+   -- local particle = cc.ParticleSystemQuad:create("ExplodingRing.plist")
+   --        particle:pos(display.cx, display.cy)
+   --        self:addChild(particle)
 end
 return GameScene

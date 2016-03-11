@@ -10,7 +10,6 @@ function MyScene:ctor()
 	self:init()
 end
 
-local sceneNum
 local chapterNum
 local totalNumber
 local enermyTypeNum
@@ -72,7 +71,7 @@ function MyScene:initMapInfo()
 	  self.hero=self.map:getObjectGroup("object")
     self.showLayer=self.map:getLayer("showLayer")
     --self.layer = self.map:getLayer("layer")
-    --self.showLayer:hide()
+    self.showLayer:hide()
 
     self.beginPoint = self.hero:getObject("begin")
     self.endPoint = self.hero:getObject("end")
@@ -123,7 +122,7 @@ function MyScene:initUI()
   	bg:pos(display.cx, display.cy)
   	self:addChild(bg)
   	--添加地图
-  	self.map = cc.TMXTiledMap:create("map/game1_1.tmx"):addTo(self)
+  	self.map = cc.TMXTiledMap:create("map/game1_"..chapterNum..".tmx"):addTo(self)
   	    --粒子特效
     local rain=cc.ParticleRain:createWithTotalParticles(2000)
      -- snow:setTexture( cc.Director:getInstance():getTextureCache():addImage("GameScene/flower.png"))
@@ -196,13 +195,18 @@ function MyScene:initUI()
 end
 
 function MyScene:initNums()
-	self.monsterNum=0     --怪物数
+
+  local tb = PublicData.SCENETABLE
+  chapterNum=1
+  totalNumber =Data2.SCENE[chapterNum].number
+  self.money=Data2.SCENE[chapterNum].money
+
+
+	 self.monsterNum=0     --怪物数
     self.number=1    --波数
     self.killEnermyNum=0  --杀敌数
     self.hp=10    
     self.isWin=false
-    self.money = 9999
-    totalNumber = 99
 
       --添加大炮
   self.cannon={}
@@ -210,8 +214,6 @@ function MyScene:initNums()
   self.monster={}
   --子弹
   self.bullet={}
-
-
 
 end
 
@@ -278,7 +280,7 @@ function MyScene:enemyMove(enemy)
   
   if table.nums(path)>0 then
     for i = #path-1,1,-1 do
-      move[#move+1] = cc.MoveTo:create(1, cc.p((path[i].x-1)*64+32,((self.RowCount-path[i].y)*64+32)))
+      move[#move+1] = cc.MoveTo:create(60/enemy.moveSpeed, cc.p((path[i].x-1)*64+32,((self.RowCount-path[i].y)*64+32)))
     end
     move[#move+1]=cc.CallFunc:create(function (event)
     event.isMove=false
@@ -288,6 +290,7 @@ function MyScene:enemyMove(enemy)
   local seq = cc.Sequence:create(move)
   enemy:runAction(seq)
 end
+
 
 function MyScene:changePath(enemy)
     enemy:stopAllActions()
@@ -852,7 +855,6 @@ function MyScene:createEnermy()
     end
     self.enermyNumLabel:setString(self.number.."/"..totalNumber)
     self.rad=math.random(1,3)
-    self.enemyCreateTime=1.5
 
     local function createMonster()
       if self.monsterNum==10 then
@@ -862,78 +864,6 @@ function MyScene:createEnermy()
         return
       else
           local enermy=Enermy.new()
-          self.moveSpeed=50
-          if self.number==2 then
-            enermy=nil
-            enermy=Enermy2.new()
-            self.moveSpeed=100
-            self.enemyCreateTime=1.4
-        elseif self.number==3 then
-            enermy=nil
-            enermy=Enermy3.new()
-            self.moveSpeed=100
-            self.enemyCreateTime=1.3
-        elseif self.number==4 then
-            enermy=nil
-            enermy=Enermy4.new()
-            self.moveSpeed=150
-            self.enemyCreateTime=1.2
-        elseif self.number==5 then
-            enermy=nil
-            enermy=Enermy5.new()
-            self.moveSpeed=150
-            self.enemyCreateTime=1.1
-        elseif self.number==6 then
-            enermy=nil
-            enermy=Enermy6.new()
-            self.moveSpeed=150
-            self.enemyCreateTime=1.0
-        elseif self.number==7 then
-            enermy=nil
-            enermy=Enermy7.new()
-            self.moveSpeed=200
-            self.enemyCreateTime=0.9
-        elseif self.number==8 then
-            enermy=nil
-            enermy=Enermy8.new()
-            self.moveSpeed=200
-            self.enemyCreateTime=0.8
-        elseif self.number==9 then
-            enermy=nil
-            enermy=Enermy9.new()
-            self.moveSpeed=200
-            self.enemyCreateTime=0.7
-        elseif self.number==10 then
-            enermy=nil
-            enermy=Enermy10.new()
-            self.moveSpeed=250
-            self.enemyCreateTime=0.6
-        elseif self.number==11 then
-            enermy=nil
-            enermy=Enermy11.new()
-            self.moveSpeed=250
-            self.enemyCreateTime=0.5
-        elseif self.number==12 then
-            enermy=nil
-            enermy=Enermy12.new()
-            self.moveSpeed=250
-            self.enemyCreateTime=0.4
-        elseif self.number==13 then
-            enermy=nil
-            enermy=Enermy13.new()
-            self.moveSpeed=300
-            self.enemyCreateTime=0.3
-        elseif self.number==14 then
-            enermy=nil
-            enermy=Enermy14.new()
-            self.moveSpeed=300
-            self.enemyCreateTime=0.2
-        elseif self.number==15 then
-            enermy=nil
-            enermy=Enermy15.new()
-            self.moveSpeed=300
-            self.enemyCreateTime=0.1
-        end
           enermy:pos(self.beginPoint.x, self.beginPoint.y)
           enermy:addTo(self.map,1)
           self.monster[#self.monster+1]=enermy
@@ -945,28 +875,42 @@ function MyScene:createEnermy()
     end
       self.handle= scheduler.scheduleGlobal(createMonster,1.5)
   end
-   self.handle1= scheduler.scheduleGlobal(createE,30) 
+   self.handle1= scheduler.scheduleGlobal(createE,15) 
 end
 
 function MyScene:createOneEnermy()
-   self.rad=math.random(1,3)
     local enermy
     local function createE()
+      self.rad=math.random(1,15)
         if self.monsterNum==10 then  
             scheduler.unscheduleGlobal(self.handle)
             self.handle=nil
             self.monsterNum=0
             return
         end
-         
-        enermy=Enermy.new()
-        self.moveSpeed=50
+        local enermys = 
+        { 
+          e1 = Enermy.new(),
+          e2 = Enermy2.new(),
+          e3 = Enermy3.new(),
+          e4 = Enermy4.new(),  
+          e5 = Enermy5.new(),
+          e6 = Enermy6.new(),
+          e7 = Enermy7.new(),
+          e8 = Enermy8.new(),
+          e9 = Enermy9.new(),
+          e10= Enermy10.new(),
+          e11= Enermy11.new(),
+          e12= Enermy12.new(),
+          e13= Enermy13.new(),
+          e14= Enermy14.new(),
+          e15= Enermy15.new()
+        }
+        enermy=enermys["e"..self.rad]
         enermy:pos(self.beginPoint.x, self.beginPoint.y)
-        -- enermy.old_life=enermy.hp
         enermy:addTo(self.map,1)
         self.monster[#self.monster+1]=enermy
         prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
-        local path = AStarFindRoute.init(prop)
         self:enemyMove(enermy)
         self.monsterNum=self.monsterNum+1
     end
@@ -1002,7 +946,7 @@ function MyScene:updata()
             
             
              --修改数据
-            self:modify()
+            --self:modify()
             local Win = WinLayer.new()
             Win:setPosition(cc.p(0, 0))
             self:addChild(Win,3)

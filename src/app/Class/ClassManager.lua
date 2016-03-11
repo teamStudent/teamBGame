@@ -54,3 +54,4 @@ WUQI5GRADE = "WuQi5Grade"
 
 require("app.Astar.AStarFindRoute")
 MyScene = require("app.scenes.MyScene")
+require("app.Data2")
