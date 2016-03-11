@@ -49,17 +49,13 @@ function GameScene:init()
     self.monsterNum=0     --怪物数
     self.number=1    --波数
     self.killEnermyNum=0  --杀敌数
-<<<<<<< HEAD
     self.exper=0  --经验
     self.hp=10    
        --血量
-    self.isWin=false
-=======
+    self.isWin=falses
     self.hp=10   
     self.isWin=false 
 
-
->>>>>>> a96f3f5da05d797b4455d90c970212fc7e2a4821
     self.tileMap =cc.TMXTiledMap:create(path)
     self.tileMap:addTo(self)
     self.hero=self.tileMap:getObjectGroup("object")
