@@ -153,7 +153,8 @@ function GameScene:init()
   --升级的炮塔
   self.upTag=0
   --生成升级或者删除的按钮
-
+  --self:uprade()
+  --塔的自动 升级
 end 
 
 function GameScene:addEventListen()
@@ -1209,18 +1210,105 @@ function GameScene:updata()
                     break
                 end 
             end
+            if v1:getTag()==10 then
+              if self.exper==12 then
+                  v1.upMake=90
+                  v1.totalMake=170
+                  v1.currentLevel=2
+                  v1.scope=150
+                  v1.firepower=15
+                  v1.removeMake=v1.totalMake*0.8
+                end
+                if self.exper==24 then
+                    v1.upMake=100
+                    v1.totalMake=270
+                    v1.currentLevel=3
+                    v1.scope=250
+                    v1.firepower=20
+                    v1.removeMake=v1.totalMake*0.8
+                  end
+              end
+            if v1:getTag()==20 then
+              if self.exper==42 then
+                  v1.upMake=120
+                  v1.totalMake=210
+                  v1.currentLevel=2
+                  v1.scope=150
+                  v1.firepower=75
+                  v1.removeMake=v1.totalMake*0.8
+                end
+                if self.exper==80 then
+                    v1.upMake=130
+                    v1.totalMake=390
+                    v1.currentLevel=3
+                    v1.scope=250
+                    v1.firepower=130
+                    v1.removeMake=v1.totalMake*0.8
+                  end
+              end
+            if v1:getTag()==30 then
+              if self.exper==4 then
+                  v1.upMake=140
+                  v1.totalMake=250
+                  v1.currentLevel=2
+                  v1.scope=150
+                  v1.firepower=95
+                  v1.removeMake=v1.totalMake*0.8
+                end
+                if self.exper==80 then
+                    v1.upMake=150
+                    v1.totalMake=410
+                    v1.currentLevel=3
+                    v1.scope=250
+                    v1.firepower=165
+                    v1.removeMake=v1.totalMake*0.8
+                  end
+              end
+            if v1:getTag()==40 then
+              if self.exper==6 then
+                  v1.upMake=230
+                  v1.totalMake=420
+                  v1.currentLevel=2
+                  v1.scope=150
+                  v1.firepower=95
+                  v1.removeMake=v1.totalMake*0.8
+                end
+                if self.exper==30 then
+                    v1.upMake=240
+                    v1.totalMake=650
+                    v1.currentLevel=3
+                    v1.scope=250
+                    v1.firepower=165
+                    v1.removeMake=v1.totalMake*0.8
+                  end
+              end
+            if v1:getTag()==50 then
+              if self.exper==30 then
+                  v1.upMake=330
+                  v1.totalMake=620
+                  v1.currentLevel=2
+                  v1.scope=150
+                  v1.firepower=135
+                  v1.removeMake=v1.totalMake*0.8
+                end
+                if self.exper==156 then
+                    v1.upMake=340
+                    v1.totalMake=950
+                    v1.currentLevel=3
+                    v1.scope=250
+                    v1.firepower=240
+                    v1.removeMake=v1.totalMake*0.8
+                  end
+              end
         end 
         if self.isWin and #self.monster==0 then
-            
-            
+                       
              --修改数据
             self:modify()
             local Win = WinLayer.new()
             Win:setPosition(cc.p(0, 0))
             self:addChild(Win,3)
-               
-
-        end
+        end 
     end
     self.handle2= scheduler.scheduleGlobal(attackEnermy,0.1)
 end
