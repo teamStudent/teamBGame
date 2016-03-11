@@ -1,27 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" width="15" height="10" tilewidth="64" tileheight="64">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="15" height="10" tilewidth="64" tileheight="64" nextobjectid="10">
  <tileset firstgid="1" name="map3" tilewidth="64" tileheight="64">
   <image source="map3.png" width="1024" height="1024"/>
  </tileset>
+ <tileset firstgid="257" name="show" tilewidth="64" tileheight="64">
+  <image source="show.png" width="64" height="64"/>
+ </tileset>
  <layer name="layer" width="15" height="10">
   <data encoding="base64" compression="zlib">
-   eJxjYCAfLAXiZVB2JhrGBoqAOBiKtwLxNiCOIlJvCZTuJMOd1NIbTCJmpcBeGADp1QRiLRL1wfRYArEViXpheirRMD6ArhYA/4QUtw==
+   eJxjYECASAZUEIlHjhpAjUI1yHKNQNwExM1A3EKimROBeBIQTwbiKSS6byEQLwLixUC8hAj1yGAjEG8C4s0k6sMGiHErDFRB1SPTlVjUVSJhXPZUQXEXVB2MBgB02RGi
   </data>
  </layer>
- <objectgroup name="object" width="15" height="10">
-  <object name="wuqi1" x="352" y="576" width="32" height="16"/>
-  <object name="wuqi2" x="416" y="576" width="32" height="16"/>
-  <object name="wuqi3" x="480" y="576" width="32" height="16"/>
-  <object name="wuqi4" x="544" y="576" width="32" height="16"/>
-  <object name="wuqi5" x="608" y="576" width="32" height="16"/>
-  <object name="tag1" x="797" y="83" width="13" height="13"/>
-  <object name="end" x="29" y="339" width="13" height="13"/>
-  <object name="begin" x="925" y="83" width="13" height="13"/>
-  <object name="tag2" x="797" y="339" width="13" height="13"/>
+ <objectgroup name="object">
+  <object id="1" name="wuqi1" x="352" y="576" width="32" height="16"/>
+  <object id="2" name="wuqi2" x="416" y="576" width="32" height="16"/>
+  <object id="3" name="wuqi3" x="480" y="576" width="32" height="16"/>
+  <object id="4" name="wuqi4" x="544" y="576" width="32" height="16"/>
+  <object id="5" name="wuqi5" x="608" y="576" width="32" height="16"/>
+  <object id="6" name="tag1" x="797" y="83" width="13" height="13"/>
+  <object id="7" name="end" x="216" y="608" width="13" height="13"/>
+  <object id="8" name="begin" x="925" y="83" width="13" height="13"/>
+  <object id="9" name="tag2" x="797" y="339" width="13" height="13"/>
  </objectgroup>
  <layer name="showLayer" width="15" height="10">
   <data encoding="base64" compression="zlib">
-   eJxjYKAPSKaC3mQ0MWIxNfWS63ZS7U1moMzegQYAymEP3A==
+   eJxjZGRgYIRiEGDEwUeXowYmxkx8atDdhwxIMROXXmLdR6y9+PTTIyxxuRmXG3CFCTEAABvLANk=
   </data>
  </layer>
 </map>

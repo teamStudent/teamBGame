@@ -911,7 +911,6 @@ function MyScene:createOneEnermy()
         enermy:addTo(self.map,1)
         self.monster[#self.monster+1]=enermy
         prop.startPos = { x = math.floor(self.beginPoint.x/64)+1 , y = math.floor((640-self.beginPoint.y)/64)+1 }
-        local path = AStarFindRoute.init(prop)
         self:enemyMove(enermy)
         self.monsterNum=self.monsterNum+1
     end
