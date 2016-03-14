@@ -6,7 +6,7 @@ local StartScene=class("StartScene", function ()
 	return display.newScene("StartScene")
 end)
 
-function StartScene:ctor(  )
+function StartScene:ctor()
 	self:init()
 end
 
@@ -17,18 +17,12 @@ function StartScene:init()
 	bg:setScale(scaleX,scaleY)
 	bg:setPosition(cc.p(display.cx,display.cy))
 	self:addChild(bg)
-                       
+           
+    local mall = display.newSprite("StartScene/mall.png")
+    mall:setPosition(cc.p(display.cx,display.cy-100))
+    --self.addChild(mall)
 
-
-	-- local starbt = cc.ui.UIPushButton.new({normal = "add.png"},{scale9=true})
-	-- 				:onButtonClicked (function(event)
-	-- 				display.replaceScene(GameScene.new())
-	-- 				end)
-	-- 				:pos(display.cx, display.cy-200)
-	-- 				:addTo(self,1)             
-    
-
-     self._startButton = cc.ui.UIPushButton.new({normal="add.png"},{scale9=true})
+    self._startButton = cc.ui.UIPushButton.new({normal="StartScene/play.png"},{scale9=true})
                        :onButtonClicked(function(event)
                         display.replaceScene(SelectScene.new())
                        end)
@@ -36,12 +30,29 @@ function StartScene:init()
                        :addTo(self)
                        :setScale(1.5)
 
+    --[[self._achieveButton = cc.ui.UIPushButton.new({normal = "StartScene/achieve.png"},{scale=true}) 
+                        :onButtonClicked(function (event)
+                        	display.replaceScene(SelectScene.new())
+                        end)
+                        :pos(display.cx, display.cy-10)
+                        :addTo(self)
+                        :setScale(1.5)
+
+    self._mallButton = cc.ui.UIPushButton.new({normal = "StartScene/mall.png"},{scale = true})
+                        :onButtonClicked(function(event)
+                         display.replaceScene(SelectScene.new())
+                        end)
+                        :pos(display.cx, display.cy-80)
+                        :addTo(self)
+                        :setScale(1.5)]]
+
+
     self._liLianButton = cc.ui.UIPushButton.new({normal="StartScene/liLian.png"},{scale9=true})
     					:onButtonClicked(function (event)
     						--display.replaceScene(require("app.scenes.Lilian").new(), "fade",  0.5, display.COLOR_WHITE)
     						display.replaceScene(Lilian.new(), "fade", 0.8)
     					end)
-    					:pos(display.cx, display.cy-130)
+    					:pos(display.cx, display.cy-150)
     					:addTo(self)
     					:setScale(1.2)
 	

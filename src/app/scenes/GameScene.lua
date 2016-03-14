@@ -806,26 +806,26 @@ function GameScene:newRect(v)
 end
 
 function GameScene:createZhujue()
-  --local zhujue = display.newSprite("houzi_2.png")
-  --zhujue:setPosition(cc.p(50,display.height-80))
-  --zhujue:setScale(0.5)
-  --self:addChild(zhujue)
-
   for i=1,2 do
     local zhujue = display.newSprite("houzi"..i..".png")
     zhujue:setPosition(cc.p(50,display.height-80))
     zhujue:setScale(0.5)
     self:addChild(zhujue)
   end
- 
-  local function createbleed() 
-    --local bleed = display.newSprite("123.png")
-    --bleed:setPosition(cc.p(50,100))
-  end
+    local loadBar = cc.ui.UILoadingBar.new({
+      scale9 = true,
+      capInsets = cc.rect(0,0,10,10), -- scale region
+      image =  "loadingbar.png", -- loading bar image
+      viewRect = cc.rect(0,0,200,32), -- set loading bar rect
+      percent = 100, -- set loading bar percent
+    -- direction = DIRECTION_RIGHT_TO_LEFT
+    -- direction = DIRECTION_LEFT_TO_RIGHT -- default
+    })
+    :setPosition(cc.p(80,display.height-120))
+    :setScale(0.5)
+    :addTo(self)
 end
 
-function GameScene:createbleed()
-end
 --怪物移动
 function GameScene :enemyMove(enemy)
   prop.startPos = { x = math.floor(enemy:getPositionX()/64)+1 , y = math.floor((640-enemy:getPositionY())/64)+1}
