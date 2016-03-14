@@ -3,7 +3,7 @@
 -- Date: 2016-03-09 11:14:42
 --
 Zhujue = class("Zhujue", function()
-	return display.newSprite("houzi_2.png")
+	return display.newSprite("Zhujue")
 end)
 function Zhujue:ctor()
 	self.hp = 300

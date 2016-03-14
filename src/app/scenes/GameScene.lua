@@ -826,8 +826,21 @@ function GameScene:createZhujue()
      zhujue:setScale(0.5)
      self:addChild(zhujue)
   end
+ 
+ local function createbleed() 
+     --local bleed = display.newSprite("123.png")
+     --bleed:setPosition(cc.p(50,100))
+
+ end
+
 end
 
+function GameScene:createbleed()
+     local bleed = display.newSprite("123.png")
+     bleed:setPosition(cc.p(50,display.height-100))
+     bleed:setScale(1.5)
+     zhujue:addChild(bleed)
+end
 
 function GameScene:createEnermy()
   local function createE()
