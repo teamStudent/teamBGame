@@ -5,7 +5,7 @@
  </tileset>
  <layer name="showLayer" width="15" height="10">
   <data encoding="base64" compression="zlib">
-   eJwzZmBgMEbDDFjEiMWU6mWg0IzBgCnxB7XDfqAAAAnRFes=
+   eJwzZmBgMEbDDFjEiMWk6EVXiwyI0UusWlLcQ677kfXicxshd1PiH0L20RMAAASsE4c=
   </data>
  </layer>
  <objectgroup name="object" opacity="0.9">
@@ -19,7 +19,7 @@
  </objectgroup>
  <layer name="layer" width="15" height="10">
   <data encoding="base64" compression="zlib">
-   eJxjYMAEyljEiAWU6oXhoQwo8Qe1w16RAkwJAACdQgNO
+   eJxjYMAEyljEiAWk6LXEoheGidELw9QCpJpnicaG8fH5g5C7qR32ihRgSgAA/VcF+g==
   </data>
  </layer>
 </map>

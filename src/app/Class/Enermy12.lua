@@ -12,6 +12,7 @@ function Enermy12:ctor()
 	self.isCustom = true
 	self.money=30
 	self.moveSpeed=60
+	self.exp=12
 	self.life=cc.Sprite:create("enermy/life.png")
 	self.life:setAnchorPoint(cc.p(0,0.5))
 	self.life:pos(0,50)

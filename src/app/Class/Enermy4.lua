@@ -12,6 +12,7 @@ function Enermy4:ctor()
 	self.isCustom = true
 	self.money=10
 	self.moveSpeed=55
+	self.exp=4
 	self.life=cc.Sprite:create("enermy/life.png")
 	self.life:setAnchorPoint(cc.p(0,0.5))
 	self.life:pos(0,48)
